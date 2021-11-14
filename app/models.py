@@ -5,10 +5,10 @@ from flask_migrate import Migrate
 from sqlalchemy.sql.functions import current_timestamp
 
 app = Flask(__name__)
-app.debug = True
+#app.debug = True
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///circular.db'
-app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
