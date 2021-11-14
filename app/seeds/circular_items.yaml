@@ -1,7 +1,7 @@
 - model: models.CircularItem
   id: 1
   fields:
-    qid: 1
+    circular_id: 1
     member_id: 1
     person: ''
     department_id: 1
@@ -10,8 +10,8 @@
 - model: models.CircularItem
   id: 2
   fields:
-    qid: 1
-    member_id: 1
+    circular_id: 1
+    member_id: 2
     person: ''
     department_id: 1
     confirm: true
@@ -19,8 +19,8 @@
 - model: models.CircularItem
   id: 3
   fields:
-    qid: 1
-    member_id: 1
+    circular_id: 1
+    member_id: 3
     person: ''
     department_id: 1
     confirm: true

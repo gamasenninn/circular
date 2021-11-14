@@ -1,10 +1,10 @@
-- model: models.circular
+- model: models.Circular
   id: 1
   fields:
     title: meeting
     detail: Lets's go meeting
     due_date: 2021-11-01
-- model: models.circular
+- model: models.Circular
   id: 2
   fields:
     title: presentation

@@ -37,8 +37,8 @@ class Member(db.Model):
             "phone_number": self.phone_number,
             "memo" : self.memo,
             "email": self.email,
-            "updated_at": updated_at, 
-            "created_at": created_at, 
+            "updated_at": self.updated_at, 
+            "created_at": self.created_at, 
         }
 
 class Circular(db.Model):
@@ -49,10 +49,10 @@ class Circular(db.Model):
     due_date = db.Column(db.Date)
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    items = db.relationship('circularItem',backref="circulars")
+    items = db.relationship('CircularItem',backref="circulars")
 
     def __repr__(self):
-        return f'<Questionbarie {self.id},{self.title}>'
+        return f'<Circular {self.id},{self.title}>'
 
     def to_dict(self):
         return {
@@ -60,8 +60,8 @@ class Circular(db.Model):
             "title": self.title,
             "detail" : self.detail,
             "due_date": self.due_date,
-            "updated_at": updated_at, 
-            "created_at": created_at, 
+            "updated_at": self.updated_at, 
+            "created_at": self.created_at, 
         }
 
 class CircularItem(db.Model):
@@ -74,10 +74,11 @@ class CircularItem(db.Model):
     memo = db.Column(db.Text)
     update_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    #circular_id = db.Column(db.Integer)
     circular_id = db.Column(db.Integer,db.ForeignKey('circulars.id'))
 
     def __repr__(self):
-        return f'<Questionbarie {self.id},{self.title}>'
+        return f'<CircularItem {self.id},{self.person}>'
 
     def to_dict(self):
         return {
