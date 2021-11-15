@@ -22,6 +22,6 @@ fixtures = load_fixture_files('./seeds',
     [
         'members.yaml',
         'circulars.yaml',
-        'circular_items.yaml',
+        'circularItems.yaml',
     ])
 load_fixtures(db.session,fixtures)

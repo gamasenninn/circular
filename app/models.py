@@ -22,23 +22,23 @@ class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(120))
     category = db.Column(db.Unicode(50))
-    phone_number = db.Column(db.String(20))
+    telNumber = db.Column(db.String(20))
     memo = db.Column(db.UnicodeText)
     email = db.Column(db.String(120))
-    updated_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    created_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
 
     def __repr__(self):
         return f'<Member {self.id},{self.name}>'
 
     def to_dict(self):
         return {
-            "member_name": self.name,
-            "phone_number": self.phone_number,
+            "name": self.name,
+            "telNumber": self.telNumber,
             "memo" : self.memo,
             "email": self.email,
-            "updated_at": self.updated_at, 
-            "created_at": self.created_at, 
+            "updatedAt": self.updatedAt, 
+            "createdAt": self.createdAt, 
         }
 
 class Circular(db.Model):
@@ -46,9 +46,9 @@ class Circular(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.UnicodeText)
     detail = db.Column(db.UnicodeText)
-    due_date = db.Column(db.Date)
-    updated_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    created_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    dueDate = db.Column(db.Date)
+    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
     items = db.relationship('CircularItem',backref="circulars")
 
     def __repr__(self):
@@ -59,23 +59,23 @@ class Circular(db.Model):
             "id": self.id,
             "title": self.title,
             "detail" : self.detail,
-            "due_date": self.due_date,
-            "updated_at": self.updated_at, 
-            "created_at": self.created_at, 
+            "dueDate": self.dueDate,
+            "updatedAt": self.updatedAt, 
+            "createdAt": self.createdAt, 
         }
 
 class CircularItem(db.Model):
-    __tablename__ = 'circular_items'
+    __tablename__ = 'circularItems'
     id = db.Column(db.Integer, primary_key=True)
-    member_id = db.Column(db.Integer)
+    memberId = db.Column(db.Integer)
     person = db.Column(db.Text)
-    department_id = db.Column(db.Integer)
+    departmentId = db.Column(db.Integer)
     confirm = db.Column(db.String(50))
     memo = db.Column(db.Text)
-    update_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    created_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
     #circular_id = db.Column(db.Integer)
-    circular_id = db.Column(db.Integer,db.ForeignKey('circulars.id'))
+    circularId = db.Column(db.Integer,db.ForeignKey('circulars.id'))
 
     def __repr__(self):
         return f'<CircularItem {self.id},{self.person}>'
@@ -83,10 +83,10 @@ class CircularItem(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "circular_id": self.circular_id,
-            "member_id": self.member_id,
+            "circularId": self.circularId,
+            "memberId": self.memberId,
             "person" : self.person,
-            "department_id": self.department_id,
+            "departmentId": self.departmentId,
             "confirm": self.confirm,
             "memo": self.memo,
         }
