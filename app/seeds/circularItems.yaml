@@ -1,27 +1,27 @@
 - model: models.CircularItem
   id: 1
   fields:
-    circular_id: 1
-    member_id: 1
+    circularId: 1
+    memberId: 1
     person: ''
-    department_id: 1
+    departmentId: 1
     confirm: true
     memo: yes I will join
 - model: models.CircularItem
   id: 2
   fields:
-    circular_id: 1
-    member_id: 2
+    circularId: 1
+    memberId: 2
     person: ''
-    department_id: 1
+    departmentId: 1
     confirm: true
     memo: yes I will join
 - model: models.CircularItem
   id: 3
   fields:
-    circular_id: 1
-    member_id: 3
+    circularId: 1
+    memberId: 3
     person: ''
-    department_id: 1
+    departmentId: 1
     confirm: true
     memo: No I am not join

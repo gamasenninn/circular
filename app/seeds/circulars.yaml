@@ -3,11 +3,11 @@
   fields:
     title: meeting
     detail: Lets's go meeting
-    due_date: 2021-11-01
+    dueDate: 2021-11-01
 - model: models.Circular
   id: 2
   fields:
     title: presentation
     detail: Lets's go preaentation
-    due_date: 2021-11-01
+    dueDate: 2021-11-01
   

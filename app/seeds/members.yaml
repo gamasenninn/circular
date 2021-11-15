@@ -2,34 +2,34 @@
   id: 1
   fields:
     name: ono
-    phone_number: 111-1111-11111
+    telNumber: 111-1111-11111
     memo: memo01
     email: ono@email.zzz
 - model: models.Member
   id: 2
   fields:
     name: sato
-    phone_number: 222-2222-2222
+    telNumber: 222-2222-2222
     memo: memo02
     email: sato@email.com
 - model: models.Member
   id: 3
   fields:
     name: tanaka
-    phone_number: 333-3333-3333
+    telNumber: 333-3333-3333
     memo: memo03
     email: tanaka@email.com
 - model: models.Member
   id: 4
   fields:
     name: yamada
-    phone_number: 444-4444-4444
+    telNumber: 444-4444-4444
     memo: memo04
     email: yamada@email.com
 - model: models.Member
   id: 5
   fields:
     name: kobayashi
-    phone_number: 555-5555-5555
+    telNumber: 555-5555-5555
     memo: memo05
     email: koba@email.com
