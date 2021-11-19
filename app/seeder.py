@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 app.debug = True
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///circular.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///circular.db?charset_type=utf8'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
