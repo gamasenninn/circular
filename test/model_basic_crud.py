@@ -34,3 +34,17 @@ for circular in circulars:
     print(circular)
     for item in circular.items:
         print("   ",item)
+
+#--- circular 1件目を更新　-----
+print("--- Member更新 --")
+#member = Member.query.filter(Member.id==2).first()
+mem = Member.query.get(9)
+print(mem)
+mem.name = "xxx"
+print(mem)
+db.session.commit()
+#member2 = Member(name='aaaaa')
+#db.session.add(member2)
+#for circular in circulars:
+
+db.session.close()
