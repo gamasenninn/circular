@@ -19,7 +19,7 @@ class BasicTest(unittest.TestCase):
         #--- member 全件読み取り　-----
         #print("--- Member全件読込 --")
         members = Member.query.all()
-        m_count = Member.query.count()
+        m_count = len(members)
         #for member in members:
         #    print(m_count,member)
         self.assertTrue(m_count)
@@ -29,11 +29,13 @@ class BasicTest(unittest.TestCase):
         #--- member 1件読み取り　-----
         #print("--- Member1件読込 --")
         member = Member.query.filter(Member.id == 1).first()
+        self.assertTrue(member)
         self.assertEqual(member.id,1)
 
         #print("--- Member1件読込NG --")
-        row_count = Member.query.filter(Member.id == 9999).count()
-        self.assertEqual(row_count,0)
+        members = Member.query.filter(Member.id == 9999).all()
+        self.assertFalse(members)
+        self.assertEqual(len(members),0)
 
     def test_get_circulars(self):
         #--- circular 全件読み取り　-----
@@ -41,7 +43,6 @@ class BasicTest(unittest.TestCase):
         circulars = Circular.query.all()
         #for circular in circulars:
         #    print(circular)
-        #print("circulars:",len(circulars))
         self.assertTrue(circulars)
         self.assertGreaterEqual(len(circulars),1)
 
@@ -63,6 +64,7 @@ class BasicTest(unittest.TestCase):
         member = Member.query.filter(Member.id==2).first()
         member.email = "xxx"
         db.session.commit()
+
         member = Member.query.filter(Member.id==2).first()
         self.assertGreaterEqual(member.email,"xxx")
 
@@ -80,6 +82,7 @@ class BasicTest(unittest.TestCase):
         #--- circular 1件目を削除　-----
         member = Member.query.filter(Member.id==3).delete()
         db.session.commit()
+
         member = Member.query.filter(Member.id==3).all()
         self.assertGreaterEqual(len(member),0)
         #print("member:", member)
