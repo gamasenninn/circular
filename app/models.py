@@ -1,20 +1,5 @@
-#from flask import Flask, render_template, request,json, jsonify,Response,make_response,redirect
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from app import db,app
 from sqlalchemy.sql.functions import current_timestamp
-
-app = Flask(__name__)
-#app.debug = True
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///circular.db'
-app.config['SQLALCHEMY_ECHO'] = False
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-#migrate = Migrate(app,db)
-migrate = Migrate(app,db,render_as_batch=True)
-#Caution if you use SQLITE, adding <render_as_batch=True> . This option is batch mode .
 
 
 class Member(db.Model):
@@ -91,13 +76,3 @@ class CircularItem(db.Model):
             "memo": self.memo,
         }
 
-
-
-
-
-
-#mem = Member.query.get(9)
-#print(mem)
-#mem.name = "xxxddddd"
-#print(mem)
-#db.session.commit()

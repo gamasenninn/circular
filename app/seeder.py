@@ -1,16 +1,5 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from app import app
 from models import db,Member,Circular,CircularItem
-from sqlalchemy_seed import create_table,drop_table,load_fixtures,load_fixture_files
-
-app = Flask(__name__)
-
-app.debug = True
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///circular.db?charset_type=utf8'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#app.config['SQLALCHEMY_ECHO'] = True
-db = SQLAlchemy(app)
 
 models = [Member,Circular,CircularItem]
 
@@ -18,10 +7,61 @@ for model in models:
     db.session.query(model).delete()
     db.session.commit()
 
-fixtures = load_fixture_files('./seeds',
-    [
-        'members.yaml',
-        'circulars.yaml',
-        'circularItems.yaml',
-    ])
-load_fixtures(db.session,fixtures)
+#------ Member ------
+print("Seed for Member")
+members = [
+    Member( id=1, name= "小野", telNumber="000-0000-0001" ,category="Web"  ,email="1111@email.xx",memo="memo01"),
+    Member( id=2, name= "佐藤", telNumber="000-0000-0002" ,category="Web"  ,email="2222@email.xx",memo="memo02"),
+    Member( id=3, name= "田中", telNumber="000-0000-0003" ,category="Web"  ,email="3333@email.xx",memo="memo03"),
+    Member( id=4, name= "渡辺", telNumber="000-0000-0004" ,category="shop" ,email="4444@email.xx",memo="memo04"),
+    Member( id=5, name= "小林", telNumber="000-0000-0005" ,category="shop" ,email="5555@email.xx",memo="memo05"),
+]
+db.session.add_all(members)
+db.session.commit()
+
+members = Member.query.all()
+for member in members:
+    print(member,member.createdAt)
+
+#------ Circular ------
+print("\nSeed for Circular")
+circulars = [
+    Circular( id=1, title= "全体会議", detail="全体会議なので全員出席希望です"  ),
+    Circular( id=2, title= "企画プレゼン", detail="新企画のプレゼン参加希望者欠をとります"  ),
+]
+db.session.add_all(circulars)
+db.session.commit()
+
+circulars = Circular.query.all()
+for circular in circulars:
+    print(circular)
+
+
+#------ CircularItems ------
+print("\nSeed for CircularItem")
+circularItems = [
+    CircularItem( id=1, circularId=1, memberId=1, person = '小野', departmentId=1, confirm=True, memo="OK 参加します"  ),
+    CircularItem( id=2, circularId=1, memberId=2, person = '佐藤', departmentId=1, confirm=True, memo="気分しだい"  ),
+    CircularItem( id=3, circularId=1, memberId=2, person = '田中', departmentId=1, confirm=False, memo="体調不良のため"  ),
+    CircularItem( id=4, circularId=2, memberId=1, person = '小野', departmentId=1, confirm=False, memo="法事のため不参加"  ),
+]
+db.session.add_all(circularItems)
+db.session.commit()
+
+circularItems = CircularItem.query.all()
+for circularItem in circularItems:
+    print(circularItem)
+
+
+'''
+#------ update test -----
+member = Member.query.filter(Member.id==4).one()
+member.name = "吉田"
+db.session.commit()
+
+members = Member.query.all()
+for member in members:
+    print(member,member.telNumber)
+'''
+
+
