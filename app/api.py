@@ -15,7 +15,13 @@ def get_members():
 
 @app.route('/r/member/<id>',methods=['GET'])
 def get_member(id):
-    return jsonify( Member.query.filter(Member.id==id).one().to_dict() )
+    row_count = Member.query.filter(Member.id==id).count()
+    app.logger.info(row_count)
+    if row_count:
+        return  jsonify(Member.query.filter(Member.id==id).first().to_dict())
+    else:
+        return jsonify([])
+    #return jsonify( Member.query.filter(Member.id==id).one().to_dict() )
 
 @app.route('/r/member',methods=['POST'])
 def create_member():
@@ -50,8 +56,14 @@ def update_member(id):
 
     return jsonify({"result": "OK", "id": id, "data": d})
 
+@app.route('/r/member/<id>',methods=['DELETE'])
+def delete_member(id):
+    #d = request.json
+    #app.logger.info(d)
+    member = Member.query.filter(Member.id==id).delete()
+    db.session.commit()
 
-
+    return jsonify({"result": "OK", "id": id, "data": ''})
 
 
 
