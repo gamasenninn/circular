@@ -1,4 +1,4 @@
-from app import db,app
+from app import db,app,ma
 from sqlalchemy.sql.functions import current_timestamp
 
 
@@ -49,6 +49,7 @@ class Circular(db.Model):
             "createdAt": self.createdAt, 
         }
 
+
 class CircularItem(db.Model):
     __tablename__ = 'circularItems'
     id = db.Column(db.Integer, primary_key=True)
@@ -76,3 +77,18 @@ class CircularItem(db.Model):
             "memo": self.memo,
         }
 
+
+class MemberSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Member
+#        load_instance = True
+
+class CircularItemSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = CircularItem
+#        include_fk = True
+
+class CircularSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Circular
+    items = ma.Nested(CircularItemSchema,many=True)

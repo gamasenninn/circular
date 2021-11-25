@@ -1,7 +1,9 @@
-from app import db,app
+from app import db,app,ma
 from  models import Member,Circular,CircularItem
+from  models import  MemberSchema,CircularSchema,CircularItemSchema
 import sys
 import unittest
+from pprint import pprint 
 
 class BasicTest(unittest.TestCase):
 
@@ -23,6 +25,19 @@ class BasicTest(unittest.TestCase):
         #for member in members:
         #    print(m_count,member)
         self.assertTrue(m_count)
+
+    def test_get_members_dict(self):    
+        #--- member 全件読み取り　-----
+        #print("--- Member全件読込 --")
+        members = Member.query.all()
+        m_count = len(members)
+        #for member in members:
+        #    print(m_count,member)
+        #self.assertTrue(m_count)
+        sch = MemberSchema(many=True).dump(members)
+        #print(sch)
+        self.assertTrue(sch)
+        self.assertEqual(sch[0]['name'],'小野')
 
     def test_get_member_byId(self):
 
@@ -56,6 +71,28 @@ class BasicTest(unittest.TestCase):
                 #print("   ",item)
                 item_count += 1
         self.assertGreaterEqual(item_count,1)
+
+    def test_get_circulars_dict(self):
+
+        #--- circular itemsも含めて全件読み取り　-----
+        #print("--- Circular+items全件読込 --")
+        circulars = Circular.query.all()
+        item_count = 0
+        for circular in circulars:
+            #print(circular)
+            for item in circular.items:
+                #print("   ",item)
+                item_count += 1
+        self.assertGreaterEqual(item_count,1)
+
+        sch = CircularSchema(many=True).dump(circulars)
+        pprint(sch, indent=4)
+        self.assertTrue(sch)
+        self.assertEqual(sch[0]['title'],'全体会議')
+        self.assertGreaterEqual(len(sch[0]['items']),1)
+        self.assertEqual(sch[0]['items'][0]['memberId'],1)
+
+
 
     def test_update_circular(self):
   
