@@ -1,5 +1,6 @@
-from app import app
+from app import app,ma
 from models import db,Member,Circular,CircularItem
+from models import  MemberSchema,CircularSchema,CircularItemSchema
 from flask import jsonify,request
 import json
 
@@ -9,16 +10,20 @@ def root():
 
 @app.route('/r/members',methods=['GET'])
 def get_members():
-    return jsonify(
-       [ member.to_dict() for member in Member.query.all()]
-    )
+    members = Member.query.all()
+    return jsonify(MemberSchema(many=True).dump(members))
+
+#    return jsonify(
+#       [ member.to_dict() for member in Member.query.all()]
+#    )
 
 @app.route('/r/member/<id>',methods=['GET'])
 def get_member(id):
     row_count = Member.query.filter(Member.id==id).count()
     app.logger.info(row_count)
     if row_count:
-        return  jsonify(Member.query.filter(Member.id==id).first().to_dict())
+        member = Member.query.filter(Member.id==id).first()
+        return  jsonify(MemberSchema().dump(member))
     else:
         return jsonify([])
     #return jsonify( Member.query.filter(Member.id==id).one().to_dict() )
@@ -64,6 +69,22 @@ def delete_member(id):
     db.session.commit()
 
     return jsonify({"result": "OK", "id": id, "data": ''})
+
+@app.route('/r/circulars',methods=['GET'])
+def get_circulars():
+    circulars = Circular.query.all()
+    return jsonify(CircularSchema(many=True).dump(circulars))
+
+@app.route('/r/circular/<id>',methods=['GET'])
+def get_circular(id):
+    row_count = Circular.query.filter(Circular.id==id).count()
+    #app.logger.info(row_count)
+    if row_count:
+        circular = Circular.query.filter(Circular.id==id).first()
+        return  jsonify(CircularSchema().dump(circular))
+    else:
+        return jsonify([])
+
 
 
 

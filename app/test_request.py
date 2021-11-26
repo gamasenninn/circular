@@ -140,6 +140,34 @@ class BasicTest(unittest.TestCase):
 
         self.assertFalse(dict_d)
 
+    def test_get_circulars(self):
+       
+        response = requests.get(f"{base_url}/r/circulars")
+        dict_d = json.loads(response.text)
+            
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+
+    def test_get_circular_by_id(self):
+
+        #-------- normal -------
+        response = requests.get(f"{base_url}/r/circular/1")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+
+        #-------- Illegal ID -------
+        response = requests.get(f"{base_url}/r/circular/9999999")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertFalse(dict_d)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
