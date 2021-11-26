@@ -136,13 +136,36 @@ class BasicTest(unittest.TestCase):
             CircularItem(memberId=2,memo="memo-2"),
             CircularItem(memberId=3,memo="memo-3")
         ]
-        new_circular = Circular(title="new-04 circular",detail="new 02 detail",items=circularItems)
+        new_circular = Circular(title="new-04 circular",detail="new 04 detail",items=circularItems)
         db.session.add(new_circular)
         db.session.commit()
         new_id = new_circular.id
         circular = Circular.query.filter(Circular.id==new_id).first()
         #pprint( CircularSchema().dump(circular))
         self.assertGreaterEqual(len(circular.items),3)
+
+    def test_update_circular_circularItems(self):
+        #---　アイテムが3件あるcircularを作成する --
+        circularItems = [
+            CircularItem(memberId=1,memo="memo-21"),
+            CircularItem(memberId=2,memo="memo-22"),
+            CircularItem(memberId=3,memo="memo-23")
+        ]
+        new_circular = Circular(title="new-05 circular",detail="new 05 detail",items=circularItems)
+        db.session.add(new_circular)
+        db.session.commit()
+        new_id = new_circular.id
+        circular = Circular.query.filter(Circular.id==new_id).first()
+        #pprint( CircularSchema().dump(circular))
+        self.assertGreaterEqual(len(circular.items),3)
+        #---　データを1件更新する -- 
+        circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
+        pprint(CircularItemSchema().dump(circularItem))
+        circularItem.memo = "update memo"
+        db.session.commit()
+        circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
+        self.assertEqual("update memo", circularItem.memo)
+
 
 if __name__ == '__main__':
     unittest.main()
