@@ -57,15 +57,5 @@ def seeder():
 if __name__ == '__main__':
     seeder()
 
-'''
-#------ update test -----
-member = Member.query.filter(Member.id==4).one()
-member.name = "吉田"
-db.session.commit()
-
-members = Member.query.all()
-for member in members:
-    print(member,member.telNumber)
-'''
 
 
