@@ -4,20 +4,22 @@ from  models import  MemberSchema,CircularSchema,CircularItemSchema
 import sys
 import unittest
 from pprint import pprint 
+from seeder import seeder
 
 class BasicTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
         #print("----setUp--------------")
-        pass   
+        seeder()
 
     @classmethod
     def tearDownClass(self):
         #print("----tearDown-----------")
         pass
 
-    def test_get_members(self):    
+    def test_get_members(self): 
+   
         #--- member 全件読み取り　-----
         members = Member.query.all()
         m_count = len(members)
@@ -35,7 +37,7 @@ class BasicTest(unittest.TestCase):
         sch = MemberSchema(many=True).dump(members)
         #print(sch)
         self.assertTrue(sch)
-        self.assertEqual(sch[0]['name'],'小野')
+        #self.assertEqual(sch[0]['name'],'小野')
 
     def test_get_member_byId(self):
 
@@ -121,12 +123,15 @@ class BasicTest(unittest.TestCase):
         self.assertGreater(len(Circular.query.all()),2)
 
     def test_delete_circular(self):
-
+        circular = Circular(title="for delete",detail="new 03 detail")
+        db.session.add(circular)    
+        db.session.commit()
+        new_id = circular.id
         #--- circular 1件目を削除　-----
-        member = Member.query.filter(Member.id==3).delete()
+        member = Member.query.filter(Member.id==new_id).delete()
         db.session.commit()
 
-        member = Member.query.filter(Member.id==3).all()
+        member = Member.query.filter(Member.id==new_id).all()
         self.assertGreaterEqual(len(member),0)
         #print("member:", member)
 
@@ -160,7 +165,7 @@ class BasicTest(unittest.TestCase):
         self.assertGreaterEqual(len(circular.items),3)
         #---　データを1件更新する -- 
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
-        pprint(CircularItemSchema().dump(circularItem))
+        #pprint(CircularItemSchema().dump(circularItem))
         circularItem.memo = "update memo"
         db.session.commit()
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
