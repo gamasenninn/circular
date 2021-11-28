@@ -87,8 +87,11 @@ def create_circular():
     if d.get('items'):
         circularItems = [
             CircularItem(
-                memberId = item.get('member'),
-                memo = item.get('memo')
+                memberId = item.get('memberId'),
+                person = item.get('person'),
+                departmentId = item.get('departmentId'),
+                confirm = item.get('confirm'),
+                memo = item.get('memo'),
             )
             for item in d.get('items')
         ]
@@ -108,6 +111,49 @@ def create_circular():
     id = newCircular.id
 
     return jsonify({"result": "OK", "id": id, "data": d})
+
+@app.route('/r/circular/<id>',methods=['PUT'])
+def update_circular():
+    d = request.json
+    app.logger.info(d)
+
+
+
+    circular  = Circular.query.filter(Circular.id==id).first()
+    if not circular:
+        return jsonify({"result": "No Data", "id": id, "data": d})
+
+# ここまで作業-------
+
+
+    if d.get('items'):
+        circularItems = [
+            CircularItem(
+                memberId = item.get('member'),
+                person = item.get('person'),
+                departmentId = item.get('departmentId'),
+                confirm = item.get('confirm'),
+                memo = item.get('memo'),
+            )
+            for item in d.get('items')
+        ]
+        #print("items:",items)
+    else:
+        circularItems = []
+
+    newCircular = Circular(
+        title = d.get('title'),
+        detail = d.get('detail'),
+        dueDate = d.get('dueData'),
+        items = circularItems,
+    )
+
+    db.session.commit()
+    id = newCircular.id
+
+    return jsonify({"result": "OK", "id": id, "data": d})
+
+
 
 if __name__ == '__main__':
 

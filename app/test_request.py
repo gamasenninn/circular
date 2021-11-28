@@ -216,6 +216,9 @@ class BasicTest(unittest.TestCase):
         self.assertEqual(200,response.status_code)
         dict_d = json.loads(response.text)
         self.assertTrue(dict_d)
+        #print(dict_d['items'])
+        self.assertGreaterEqual(dict_d['items'][0]['memberId'],1)
+        self.assertGreaterEqual(len(dict_d['items']),1)
 
 
 
