@@ -1,3 +1,4 @@
+from typing import ItemsView
 from app import app,ma
 from models import db,Member,Circular,CircularItem
 from models import  MemberSchema,CircularSchema,CircularItemSchema
@@ -13,10 +14,6 @@ def get_members():
     members = Member.query.all()
     return jsonify(MemberSchema(many=True).dump(members))
 
-#    return jsonify(
-#       [ member.to_dict() for member in Member.query.all()]
-#    )
-
 @app.route('/r/member/<id>',methods=['GET'])
 def get_member(id):
     row_count = Member.query.filter(Member.id==id).count()
@@ -26,7 +23,6 @@ def get_member(id):
         return  jsonify(MemberSchema().dump(member))
     else:
         return jsonify([])
-    #return jsonify( Member.query.filter(Member.id==id).one().to_dict() )
 
 @app.route('/r/member',methods=['POST'])
 def create_member():
@@ -63,8 +59,6 @@ def update_member(id):
 
 @app.route('/r/member/<id>',methods=['DELETE'])
 def delete_member(id):
-    #d = request.json
-    #app.logger.info(d)
     member = Member.query.filter(Member.id==id).delete()
     db.session.commit()
 
@@ -85,8 +79,35 @@ def get_circular(id):
     else:
         return jsonify([])
 
+@app.route('/r/circular',methods=['POST'])
+def create_circular():
+    d = request.json
+    app.logger.info(d)
 
+    if d.get('items'):
+        circularItems = [
+            CircularItem(
+                memberId = item.get('member'),
+                memo = item.get('memo')
+            )
+            for item in d.get('items')
+        ]
+        #print("items:",items)
+    else:
+        circularItems = []
 
+    newCircular = Circular(
+        title = d.get('title'),
+        detail = d.get('detail'),
+        dueDate = d.get('dueData'),
+        items = circularItems,
+    )
+
+    db.session.add(newCircular)
+    db.session.commit()
+    id = newCircular.id
+
+    return jsonify({"result": "OK", "id": id, "data": d})
 
 if __name__ == '__main__':
 

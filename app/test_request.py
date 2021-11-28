@@ -1,6 +1,7 @@
 import requests
 import json
 import unittest
+from seeder import seeder
 
 
 base_url ="http://localhost:5010"
@@ -10,7 +11,7 @@ class BasicTest(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         #print("----setUp--------------")
-        pass   
+        seeder()   
 
     @classmethod
     def tearDownClass(self):
@@ -166,6 +167,55 @@ class BasicTest(unittest.TestCase):
         dict_d = json.loads(response.text)
         self.assertFalse(dict_d)
 
+    def test_create_circular(self):
+        #---- insert data No Items------
+        data = {
+            'title': "request title 01",
+            'detail': "detail 01",
+            'dueDate': "2021/12/01",
+        }
+        response = requests.post(
+            f'{base_url}/r/circular',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        new_id = dict_d['id']
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+
+        #print("---- insert data with Items------")
+        data = {
+            'title': "request title 02",
+            'detail': "detail 02",
+            'dueDate': "2021/12/02",
+            'items': [
+                {'memberId':1,'memo':'with item 01'},
+                {'memberId':2,'memo':'with item 02'},
+                {'memberId':3,'memo':'with item 03'},
+            ]
+        }
+        response = requests.post(
+            f'{base_url}/r/circular',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        new_id = dict_d['id']
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
 
 
 
