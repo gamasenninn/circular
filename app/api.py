@@ -117,41 +117,26 @@ def update_circular():
     d = request.json
     app.logger.info(d)
 
-
-
     circular  = Circular.query.filter(Circular.id==id).first()
     if not circular:
         return jsonify({"result": "No Data", "id": id, "data": d})
 
-# ここまで作業-------
-
-
-    if d.get('items'):
-        circularItems = [
-            CircularItem(
-                memberId = item.get('member'),
-                person = item.get('person'),
-                departmentId = item.get('departmentId'),
-                confirm = item.get('confirm'),
-                memo = item.get('memo'),
-            )
-            for item in d.get('items')
-        ]
-        #print("items:",items)
-    else:
-        circularItems = []
-
-    newCircular = Circular(
-        title = d.get('title'),
-        detail = d.get('detail'),
-        dueDate = d.get('dueData'),
-        items = circularItems,
-    )
+    circular.title = d.get('title')
+    circular.detail = d.get('detail')
+    circular.dueDate = d.get('dueData')
 
     db.session.commit()
-    id = newCircular.id
+    #id = newCircular.id
 
     return jsonify({"result": "OK", "id": id, "data": d})
+
+@app.route('/r/circular/<id>',methods=['DELETE'])
+def delete_circular(id):
+    circular = Circular.query.filter(Circular.id==id).first()
+    db.session.delete(circular)
+    db.session.commit()
+
+    return jsonify({"result": "OK", "id": id, "data": ''})
 
 
 

@@ -183,8 +183,8 @@ class BasicTest(unittest.TestCase):
         new_id = dict_d['id']
         self.assertEqual(200,response.status_code)
         self.assertTrue(dict_d)
-        response = requests.get(f"{base_url}/r/circular/{new_id}")
 
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
         self.assertTrue(response.text)
         self.assertEqual(200,response.status_code)
         dict_d = json.loads(response.text)
@@ -220,6 +220,94 @@ class BasicTest(unittest.TestCase):
         self.assertGreaterEqual(dict_d['items'][0]['memberId'],1)
         self.assertGreaterEqual(len(dict_d['items']),1)
 
+    def test_update_circular(self):
+        #---- insert circular data No Items------
+        data = {
+            'title': "request title 02",
+            'detail': "detail 02",
+            'dueDate': "2021/12/02",
+        }
+        response = requests.post(
+            f'{base_url}/r/circular',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        new_id = dict_d['id']
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+
+        #---- Update circular data ------
+        data = {
+            'title': "Update -- request title 02",
+            'detail': "Update -- detail 02",
+            'dueDate': "2021/12/0102",
+        }
+        response = requests.put(
+            f'{base_url}/r/circular/{new_id}',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+        self.assertEqual("Update -- request title 02",dict_d['title'])
+        self.assertEqual("Update -- detail 02",dict_d['detail'])
+
+    def test_delete_circular(self):
+        #print("---- insert data with Items------")
+        data = {
+            'title': "request title for delete",
+            'detail': "detail for delete",
+            'dueDate': "2021/12/02",
+            'items': [
+                {'memberId':1,'memo':'delete -- with item 01'},
+                {'memberId':2,'memo':'delete -- with item 02'},
+                {'memberId':3,'memo':'delete -- with item 03'},
+            ]
+        }
+        response = requests.post(
+            f'{base_url}/r/circular',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        new_id = dict_d['id']
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+
+        #---- delete data ------
+        response = requests.delete(
+            f'{base_url}/r/circular/{new_id}',
+            headers={'Content-Type': 'application/json'})
+        dict_d = json.loads(response.text)
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+        self.assertEqual(200,response.status_code)
+        print(response.text)
+        dict_d = json.loads(response.text)
+        self.assertFalse(dict_d)
+      
 
 
 if __name__ == '__main__':

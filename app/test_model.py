@@ -170,6 +170,30 @@ class BasicTest(unittest.TestCase):
         db.session.commit()
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
         self.assertEqual("update memo", circularItem.memo)
+        #この更新は無理がある。新規idがかくれてしまっている
+
+    def test_delete_circular_cascade(self):
+        #---　アイテムが3件あるcircularを作成する --
+        circularItems = [
+            CircularItem(memberId=1,memo="memo-31"),
+            CircularItem(memberId=2,memo="memo-32"),
+            CircularItem(memberId=3,memo="memo-33")
+        ]
+        new_circular = Circular(title="new-05 circular",detail="new 05 detail",items=circularItems)
+        db.session.add(new_circular)
+        db.session.commit()
+        new_id = new_circular.id
+        circular = Circular.query.filter(Circular.id==new_id).first()
+        #pprint( CircularSchema().dump(circular))
+        self.assertGreaterEqual(len(circular.items),3)
+
+        db.session.delete(circular)
+        db.session.commit()
+        circular = Circular.query.filter(Circular.id==new_id).first()
+        self.assertFalse(circular)
+        circular = CircularItem.query.filter(CircularItem.circularId==new_id).first()
+        self.assertFalse(circular)
+
 
 
 if __name__ == '__main__':
