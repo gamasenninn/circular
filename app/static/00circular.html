@@ -1,0 +1,595 @@
+<html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+<link href="images/favicon.ico" rel="shortcut icon">
+-->
+<title>回覧板</title>
+<!-- Load required Bootstrap and BootstrapVue CSS -->
+
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue.min.css" />
+
+<!-- Load fontawesome -->
+<!-- link href="./css/all.css" rel="stylesheet" -->
+<!--load all styles -->
+<!-- <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
+<link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
+
+<!-- Load polyfills to support older browsers -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"
+  crossorigin="anonymous"></script>
+
+<!-- Load Vue followed by BootstrapVue -->
+<script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+<script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue.min.js"></script>
+
+<!-- Load the following for BootstrapVueIcons support -->
+<script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue-icons.min.js"></script>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<!-- 各種便利なツール塁です必要なときに随時使用のこと
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-image-lightbox@6.4.0/dist/vue-image-lightbox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/vue-image-lightbox@6.4.0/dist/vue-image-lightbox.min.js"></script>
+<script src="https://unpkg.com/vue-lazyload/vue-lazyload.js"></script>
+<script src="./jsQR.js"></script>
+<script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+-->
+
+<style>
+  .bg {
+    background-color: #e9ecef;
+  }
+
+  [v-cloak] {
+    display: none;
+  }
+
+  .b-table thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    background: gray;
+    top: 0;
+    z-index: 1;
+  }
+
+  .table.b-table-sm.b-table-stacked-sm>tbody>tr>[data-label]::before {
+    content: attr(data-label);
+    width: 10%;
+    float: left;
+    text-align: left;
+    overflow-wrap: break-word;
+    font-weight: 700;
+    font-style: normal;
+    padding: 0 calc(1rem / 2) 0 0;
+    margin: 0;
+  }
+
+  .flexContainer {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .item {
+    width: 100%;
+  }
+
+  .item-img {
+    padding: 0;
+  }
+
+  .item-body {
+    padding: 0;
+  }
+
+  .item-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ef5350;
+  }
+
+  .item-body p {
+    font-size: 16px;
+    font-weight: 400;
+    color: #333;
+  }
+
+  .items {
+    display: flex;
+    /* justify-content: space-between; */
+    justify-content: flex-start;
+  }
+
+  .sm-mode {
+    display: none;
+  }
+
+  .pc-mode {
+    display: block;
+  }
+
+  @media screen and (max-width:560px) {
+
+    /*　画面サイズが768pxから1024pxまではここを読み込む　*/
+    .items .item {
+      width: 100%;
+    }
+
+    .sm-mode {
+      display: block;
+    }
+
+    .pc-mode {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width:560px) {
+
+    /*　画面サイズが768pxからはここを読み込む　*/
+    .items .item {
+      width: 50%;
+    }
+  }
+
+  @media screen and (min-width:1200px) {
+
+    /*　画面サイズが768pxからはここを読み込む　*/
+    .items .item {
+      width: 30%;
+    }
+  }
+
+  @media screen and (min-width:1300px) {
+
+    /*　画面サイズが768pxからはここを読み込む　*/
+    .items .item {
+      width: 25%;
+    }
+  }
+</style>
+<!--   mock up here -->
+
+<div id="app" v-cloak>
+  <b-row class="bg pt-2 pb-2">
+    <b-col></b-col>
+    <b-col cols-md="10" cols-sm="6" class="mt-2 mt-2 mr-auto">
+      <div class="text-center h5">回覧版</div>
+    </b-col>
+    <b-col>
+      <div class="text-right">menu</div>
+    </b-col>
+  </b-row>
+  <div v-if="isList">
+    <b-row class="mt-2">
+      <b-col>
+      </b-col> <!-- dummy -->
+      <b-col cols=10>
+        <div class="text-right">
+          <b-button variant="info" @click="modalEditQuestionary">+
+          </b-button>
+        </div>
+        <b-card class="mb-3">
+          <b-table hover caption-top striped small id="qlist" sort-by="qid" sort-desc=true small head-variant="light"
+            label="Table Options" :items="questionarys" :fields="[
+                        {  key: 'qid', label: '',  sortable: true },
+                        {  key: 'title', label: '回覧件名' ,  sortable: true},
+                        {  key: 'control',  label: '詳細' },
+                      ]">
+            <template #cell(qid)="data">
+              <p class="text-center">{{data.item.qid}}</p>
+              <p class="text-center">
+                <b-badge variant="danger" href="#" @click="deleteQuestionary(data.item.qid)">削除</b-badge>
+              </p>
+            </template>
+            <template #cell(title)="data">
+              <b-badge variant="secondary" class="mb-2">
+                <div class="h7">{{data.item.title}}</div>
+              </b-badge>
+              <b-badge variant="light" class="mb-2">
+                <div class="h7">実施日: {{data.item.applyDate}}</div>
+              </b-badge>
+              <br />
+              {{data.item.detail}}
+            </template>
+            <template #cell(control)="data">
+              <b-button variant="info" @click="changePage(data.item)"> ＞</b-button>
+            </template>
+          </b-table>
+        </b-card>
+      </b-col>
+      <b-col></b-col> <!-- dummy -->
+    </b-row>
+    <b-modal id="modal-questionarys" hide-footer>
+      <b-card>
+        <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧件名" label-for="title">
+          <b-form-input v-model="header.title" id="title" size="sm"></b-form-input>
+        </b-form-group>
+        <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧内容" label-for="detail">
+          <b-form-textarea v-model="header.detail" id="detail" size="sm" rows=5></b-form-textarea>
+        </b-form-group>
+
+        <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="実施日" label-for="applyDate">
+          <b-form-input v-model="header.applyDate" id="applyDate" size="sm" type="date"></b-form-input>
+        </b-form-group>
+      </b-card>
+      <b-button variant="info" @click="insertQuestionary">更新</b-button>
+      <b-button variant="warning" @click="$bvModal.hide('modal-questionarys')">キャンセル</b-button>
+
+    </b-modal>
+  </div> <!-- end list -->
+  <div v-if="!isList">
+    <b-button variant="info" @click="isList=true">＜</b-button>
+    <b-row class="mt-1">
+      <b-col></b-col> <!-- dummy -->
+      <!--- 本体　-->
+      <b-col cols=10>
+        <b-card class="mb-3 ">
+          <b-row>
+            <b-col md="11">
+
+              <!-- header -->
+
+              <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧件名" label-for="title">
+                <b-form-input v-model="header.title" id="title" size="sm"></b-form-input>
+              </b-form-group>
+              <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧内容" label-for="detail">
+                <b-form-textarea v-model="header.detail" id="detail" size="sm" rows=5></b-form-textarea>
+              </b-form-group>
+
+              <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="実施日" label-for="applyDate">
+                <b-form-input v-model="header.applyDate" id="applyDate" size="sm" type="date"></b-form-input>
+              </b-form-group>
+              <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧番号" label-for="qid">
+                <!-- <b-form-input v-model="header.qid" id="qid" size="sm"></b-form-input> -->
+                <p class="text-left pl-2" id="qid">{{header.qid}}</p>
+              </b-form-group>
+
+              <div class="float-right">
+                <b-button variant="info" @click="updateQuestionary">更新</b-button>
+              </div>
+            </b-col>
+          </b-row> <!-- end header -->
+        </b-card>
+        <!--  table list & edit -->
+        <div class="text-right">
+          <b-button @click="modalEditQuestionaryItem">+</b-button>
+        </div>
+        <div class="pc-mode">
+          <b-table hover caption-top small id="htable" striped sort-by="ID" small head-variant="light"
+            label="Table Options" :items=questionaryItems :fields="[
+                      {  key: 'control',   label: '' },
+                      {  key: 'person', label: '部署/氏名' ,  sortable: true},
+                      {  key: 'confirm',   label: '確認' },
+                      {  key: 'memo',  label: 'メモ' },
+                      {  key: 'save',  label: '確定' },
+                    ]">
+
+            <template #cell(control)="data">
+              <p hidden>{{data.item.id}}</p>
+              <b-button variant="danger" @click="deleteQuestionaryItem(data.item.id)" size="sm">削除</b-button>
+              <img :src="'images/'+data.index+'.png'" width="50"><br/>
+            </template>
+            <template #cell(person)="data">
+              <span class="mr-3">{{data.item.department}}</span><span>{{data.item.person}}</span>
+            </template>
+            <template #cell(confirm)="data">
+              <b-form-group label="">
+                <b-form-select v-model="data.item.confirm" :options="options.confirm" @change="data.item.isChange=true">
+                </b-form-select>
+              </b-form-group>
+            </template>
+            <template #cell(memo)="data">
+              <b-form-textarea v-model="data.item.memo" @change="data.item.isChange=true" 　id="memo" size="sm">
+              </b-form-textarea>
+            </template>
+            <template #cell(save)="data">
+              <b-button v-if="data.item.isChange" size="sm" variant="primary" @click="updateQuestionaryItem(data.item)">
+                保存
+              </b-button>
+            </template>
+            <template #table-colgroup="data">
+              <col v-for="field in data.fields" :key="field.key" :style="{ width:
+                      field.key == 'memo' ? '10%':
+                      field.key == 'person' ? '8%': '5%'}">
+            </template>
+          </b-table>
+        </div>
+        <!--詳細登録用モーダル　-->
+        <b-modal id="modal-questionaryItem" hide-footer>
+          <b-card>
+            <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="部署" label-for="department">
+              <b-form-input v-model="editQuestionaryItem.department" id="department" size="sm"></b-form-input>
+            </b-form-group>
+            <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="氏名" label-for="person">
+              <b-form-input v-model="editQuestionaryItem.person" id="person" size="sm"></b-form-input>
+            </b-form-group>
+            <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="確認" label-for="confirm">
+              <b-form-select v-model="editQuestionaryItem.confirm" :options="options.confirm" id="confirm" size="sm">
+              </b-form-select>
+            </b-form-group>
+
+            <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="備考・理由など" label-for="memo">
+              <b-form-textarea v-model="editQuestionaryItem.memo" id="memo" size="sm" rows=5></b-form-textarea>
+            </b-form-group>
+
+          </b-card>
+          <b-button variant="info" @click="insertQuestionaryItem">更新</b-button>
+          <b-button variant="warning" @click="$bvModal.hide('modal-questionaryItem')">キャンセル</b-button>
+
+        </b-modal>
+
+        <!--  for smart phone. card tile -->
+        <div class="flexContainer items sm-mode">
+          <template v-for="(item,index) in questionaryItems">
+            <div class="item">
+              <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
+                <b-row align-v="center">
+                  <b-col align-self="center">
+                    <img :src="'images/'+index+'.png'" width="70"><br/>
+                    <p class="text-center">{{item.person}}</p>
+                  </b-col>
+                  <b-col cols=9>
+                      <b-form-select v-model="item.confirm" :options="options.confirm" @change="item.isChange=true">
+                      </b-form-select>
+                      <b-form-textarea v-model="item.memo" @change="item.isChange=true" 　id="memo" size="sm">
+                      </b-form-textarea>
+                      <b-button v-if="item.isChange" size="sm" variant="primary" @click="updateQuestionaryItem(item)">
+                        保存
+                      </b-button>
+                  </b-col>
+                </b-row>
+              </b-card>
+            </div>
+          </template>
+        </div>
+        <!-- end card tile -->
+
+
+        <!-- 備考欄 -->
+
+      </b-col> <!-- 本体 -->
+
+      <b-col>
+      </b-col>
+
+    </b-row>
+  </div>
+
+  <script>
+    Vue.filter('nf', function (val) {
+      return val.toLocaleString();
+    });
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        isList: true,
+        questionarys: [],
+        test_data_questionarys: [
+          {
+            applyDate: '2021-11-01',
+            qid: '1001',
+            title: '全体会議のお知らせ',
+            detail: '全体会議の参加の出欠をお願いします。\nそのさいはんこはかならずお持ちください。',
+            create_at: "2022-01-01",
+          },
+          {
+            applyDate: '2021-11-02',
+            qid: '1002',
+            title: '飲み会のお知らせ',
+            detail: '飲み会をします。場所の都合もありますので、参加者は早めに出欠決めてください。',
+            create_at: "2022-01-01",
+          },
+          {
+            applyDate: '2021-11-10',
+            qid: '1003',
+            title: 'テスト　太郎',
+            detail: '全体会議の参加の出欠をお願いします。',
+            create_at: "2022-01-01",
+          },
+        ],
+        header: {
+          applyDate: '',
+          qid: '',
+          title: '',
+          detail: '',
+        },
+        questionaryItems: [],
+        editQuestionaryItem: {
+          empId: '',
+          person: '',
+          department: '',
+          confirm: '',
+          memo: ''
+        },
+        testDataquestionaryItems: [
+          { id: 1, qid: 1, empId: 1001, person: '蒲キミオ', department: '鹿沼店', confirm: '参加', memo: '参加します', isChange: false },
+          { id: 2, qid: 1, empId: 1002, person: '佐藤', department: '鹿沼店', confirm: '不参加', memo: '法事のため', isChange: false },
+          { id: 3, qid: 1, empId: 2001, person: '鈴木', department: '鹿沼店', confirm: '不参加', memo: '子供の行事', isChange: false },
+          { id: 4, qid: 1, empId: 2002, person: '小野', department: '鹿沼店', confirm: '', memo: '', isChange: false },
+          { id: 5, qid: 8, empId: 3001, person: '山田', department: '鹿沼店', confirm: '', memo: '', isChange: false },
+          { id: 6, qid: 8, empId: 1001, person: '蒲キミオ', department: '鹿沼店', confirm: '参加', memo: '参加します', isChange: false },
+          { id: 7, qid: 8, empId: 1002, person: '佐藤', department: '鹿沼店', confirm: '不参加', memo: '法事のため', isChange: false },
+          { id: 8, qid: 8, empId: 2001, person: '鈴木', department: '鹿沼店', confirm: '不参加', memo: '子供の行事', isChange: false },
+          { id: 9, qid: 11, empId: 2002, person: '小野', department: '鹿沼店', confirm: '', memo: '', isChange: false },
+          { id: 10, qid: 11, empId: 3001, person: '山田', department: '鹿沼店', confirm: '', memo: '', isChange: false },
+        ],
+        options: {
+          person: [
+            { value: '蒲キミオ', text: '蒲キミオ' },
+            { value: '佐藤', text: '佐藤' },
+            { value: '鈴木', text: '鈴木' },
+            { value: '小野', text: '小野' },
+            { value: '山田', text: '山田' },
+          ],
+          confirm: [
+            { value: '', text: '' },
+            { value: '参加', text: '参加' },
+            { value: '不参加', text: '不参加' },
+            { value: '保留', text: '保留' },
+          ],
+        },
+        isPrint: false,
+      },
+      methods: {
+        modalEditQuestionary: function () {
+          this.header.applyDate = '';
+          this.header.qid = null;
+          this.header.title = '';
+          this.header.detail = '';
+          this.$bvModal.show('modal-questionarys');
+        },
+        modalEditQuestionaryItem: function () {
+          this.editQuestionaryItem.qid = null;
+          this.editQuestionaryItem.person = '';
+          this.editQuestionaryItem.department = '';
+          this.editQuestionaryItem.confirm = '';
+          this.editQuestionaryItem.memo = '';
+
+          this.$bvModal.show('modal-questionaryItem');
+        },
+        insertQuestionary: async function () {
+          self = this;
+          let request = self.header;
+          delete request.qid;
+          console.log(request);
+
+          url = "api/questionarys";
+          await axios.post(url, request)
+            .then(function (response) {
+              console.log(response);
+              self.fetchQuestionarysAll();
+            });
+
+          self.$bvModal.hide('modal-questionarys');
+        },
+        insertQuestionaryItem: async function () {
+          self = this;
+          let request = Object.assign({}, self.editQuestionaryItem);
+          delete request.id;
+          request.qid = this.header.qid;
+          console.log(request);
+
+          url = "api/questionary_items";
+          await axios.post(url, request)
+            .then(function (response) {
+              console.log(response);
+              self.fetchQuestionaryItemsByKey(self.header.qid);
+            });
+
+          self.$bvModal.hide('modal-questionaryItem');
+        },
+        updateQuestionary: async function () {
+          self = this;
+          let request = self.header;
+          console.log(request);
+
+          url = "api/questionarys/qid/" + request.qid;
+          await axios.put(url, request)
+            .then(function (response) {
+              console.log(response);
+              self.fetchQuestionarysAll();
+            });
+
+          //self.$bvModal.hide('modal-questionarys');
+        },
+        updateQuestionaryItem: async function (item) {
+          self = this;
+          let request = Object.assign({}, item);
+          delete request.isChange;
+          console.log(item);
+          console.log(request);
+
+
+          url = "api/questionary_items/id/" + item.id;
+          await axios.put(url, request)
+            .then(function (response) {
+              console.log(response);
+              //self.fetchQuestionarysAll();
+              //self.fetchQuestionaryItemsByKey(item.qid)
+            });
+          console.log(item);
+          item.isChange = false;
+
+          //self.$bvModal.hide('modal-questionarys');
+        },
+        deleteQuestionary: async function (qid) {
+          self = this;
+          if (confirm("削除してよろしいですか？")) {
+            url = "api/questionarys/qid/" + qid;
+            await axios.delete(url)
+              .then(function (response) {
+                console.log(response);
+                self.fetchQuestionarysAll();
+              });
+          }
+        },
+        deleteQuestionaryItem: async function (id) {
+          self = this;
+          if (confirm("削除してよろしいですか？")) {
+            url = "api/questionary_items/id/" + id;
+            await axios.delete(url)
+              .then(function (response) {
+                console.log(response);
+                self.fetchQuestionaryItemsByKey(self.header.qid);
+              });
+          }
+        },
+        fetchQuestionarysAll: async function () {
+          //      this.questionarys= this.test_data_questionarys;
+          self = this;
+          url = "api/questionarys";
+          await axios.get(url)
+            .then(function (response) {
+              console.log(response);
+              self.questionarys = response.data;
+            });
+
+        },
+        fetchQuestionaryItemsByKey: async function (qid) {
+          self = this;
+          url = "api/questionary_items/qid/" + qid;
+          await axios.get(url)
+            .then(function (response) {
+              console.log(response);
+              self.questionaryItems = response.data;
+              self.questionaryItems = self.questionaryItems.map(item => ({ ...item, isChange: false }));
+            });
+          /*
+                result= this.testDataquestionaryItems.filter(function(v){
+                  return v.qid == qid;
+                })
+                this.questionaryItems = result;
+          */
+        },
+        changePage: function (item) {
+          this.header = item;
+          this.fetchQuestionaryItemsByKey(item.qid);
+          this.isList = false;
+        },
+        toDB: function (item) {
+          alert("DB更新しました。");
+          item.isChange = false;
+
+        }
+
+      },
+      computed: {
+        // 逐次、数量＊単価の合計をする
+      },
+      created: function () {
+        this.fetchQuestionarysAll();
+      }
+    })
+  </script>
+
+</html>

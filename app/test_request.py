@@ -2,6 +2,7 @@ import requests
 import json
 import unittest
 from seeder import seeder
+import datetime
 
 
 base_url ="http://localhost:5010"
@@ -172,7 +173,7 @@ class BasicTest(unittest.TestCase):
         data = {
             'title': "request title 01",
             'detail': "detail 01",
-            'dueDate': "2021/12/01",
+            'dueDate': "2021-12-01",
         }
         response = requests.post(
             f'{base_url}/r/circular',
@@ -194,7 +195,7 @@ class BasicTest(unittest.TestCase):
         data = {
             'title': "request title 02",
             'detail': "detail 02",
-            'dueDate': "2021/12/02",
+            'dueDate': "2021-12-02",
             'items': [
                 {'memberId':1,'memo':'with item 01'},
                 {'memberId':2,'memo':'with item 02'},
@@ -225,7 +226,7 @@ class BasicTest(unittest.TestCase):
         data = {
             'title': "request title 02",
             'detail': "detail 02",
-            'dueDate': "2021/12/02",
+            'dueDate': "2021-12-02",
         }
         response = requests.post(
             f'{base_url}/r/circular',
@@ -247,7 +248,7 @@ class BasicTest(unittest.TestCase):
         data = {
             'title': "Update -- request title 02",
             'detail': "Update -- detail 02",
-            'dueDate': "2021/12/0102",
+            'dueDate': "2021-12-01",
         }
         response = requests.put(
             f'{base_url}/r/circular/{new_id}',
@@ -271,7 +272,7 @@ class BasicTest(unittest.TestCase):
         data = {
             'title': "request title for delete",
             'detail': "detail for delete",
-            'dueDate': "2021/12/02",
+            'dueDate': "2021-12-02",
             'items': [
                 {'memberId':1,'memo':'delete -- with item 01'},
                 {'memberId':2,'memo':'delete -- with item 02'},
@@ -313,7 +314,7 @@ class BasicTest(unittest.TestCase):
         data = {
             'title': "request title for test_update_cirsulat_item",
             'detail': "detail for update",
-            'dueDate': "2021/12/02",
+            'dueDate': "2021-12-01",
             'items': [
                 {'memberId':1,'memo':'01 test_update_cirsulat_item 01'},
                 {'memberId':2,'memo':'02 test_update_cirsulat_item 02'},
@@ -336,12 +337,72 @@ class BasicTest(unittest.TestCase):
         dict_d = json.loads(response.text)
         self.assertTrue(dict_d)
         # ---- update circular-item ---
-        items = [ item for item in dict_d['items']]
-        print(items)
+        id_l = [ item['id'] for item in dict_d['items']]
+        id = id_l[0]
+        #print(id)
+        data =  {'memberId':9,'memo':'99updated'}
 
+        #--- update circularItem ----
+        response = requests.put(
+            f'{base_url}/r/circular-item/{id}',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
 
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
 
+        response = requests.get(f"{base_url}/r/circular-item/{id}")
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+        self.assertEqual(dict_d['memo'],'99updated')
 
+    def test_delete_circular_item(self):
+        #print("---- insert data with Items------")
+        data = {
+            'title': "request title for test_delete_cirsulat_item",
+            'detail': "detail for update",
+            'dueDate': "2021-12-01",
+            'items': [
+                {'memberId':1,'memo':'01 test_delete_cirsulat_item 01'},
+                {'memberId':2,'memo':'02 test_delete_cirsulat_item 02'},
+                {'memberId':3,'memo':'03 test_delete_cirsulat_item 03'},
+            ]
+        }
+        response = requests.post(
+            f'{base_url}/r/circular',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        new_id = dict_d['id']
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+        # ---- update circular-item ---
+        id_l = [ item['id'] for item in dict_d['items']]
+        id = id_l[0]
+
+        #--- update circularItem ----
+        response = requests.delete(
+            f'{base_url}/r/circular-item/{id}',
+            headers={'Content-Type': 'application/json'}
+        )
+
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+
+        response = requests.get(f"{base_url}/r/circular-item/{id}")
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertFalse(dict_d)
 
 
 if __name__ == '__main__':

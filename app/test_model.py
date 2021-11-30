@@ -5,6 +5,7 @@ import sys
 import unittest
 from pprint import pprint 
 from seeder import seeder
+import datetime
 
 class BasicTest(unittest.TestCase):
 
@@ -115,8 +116,8 @@ class BasicTest(unittest.TestCase):
 
     def test_create_circular(self):
         c_list=[
-            Circular(title="new-01 circular",detail="new 01 detail"),
-            Circular(title="new-02 circular",detail="new 02 detail")
+            Circular(title="new-01 circular",detail="new 01 detail",dueDate=datetime.datetime.strptime("2021/12/01", "%Y/%m/%d")),
+            Circular(title="new-02 circular",detail="new 02 detail",dueDate=datetime.datetime.strptime("2021/12/01", "%Y/%m/%d"))
         ]
         db.session.add_all(c_list)
         db.session.commit()

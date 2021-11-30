@@ -4,6 +4,7 @@ from models import db,Member,Circular,CircularItem
 from models import  MemberSchema,CircularSchema,CircularItemSchema
 from flask import jsonify,request
 import json
+import datetime
 
 
 @app.route('/r/members',methods=['GET'])
@@ -99,7 +100,7 @@ def create_circular():
     newCircular = Circular(
         title = d.get('title'),
         detail = d.get('detail'),
-        dueDate = d.get('dueData'),
+        dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d"),
         items = circularItems,
     )
 
@@ -120,7 +121,7 @@ def update_circular(id):
 
     circular.title = d.get('title')
     circular.detail = d.get('detail')
-    circular.dueDate = d.get('dueData')
+    circular.dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d")
 
     db.session.commit()
     #id = newCircular.id
@@ -137,8 +138,37 @@ def delete_circular(id):
 
 @app.route('/r/circular-items',methods=['GET'])
 def get_circular_items():
-    circularItems = CircularItems.query.all()
+    circularItems = CircularItem.query.all()
     return jsonify(CircularItemSchema(many=True).dump(circularItems))
+
+@app.route('/r/circular-items/<hid>',methods=['GET'])
+def get_circular_items_by_key(hid):
+    circularItems = CircularItem.query.filter(CircularItem.circularId==hid).all()
+    return jsonify(CircularItemSchema(many=True).dump(circularItems))
+
+@app.route('/r/circular-item/<id>',methods=['GET'])
+def get_circular_item(id):
+    circularItem = CircularItem.query.filter(CircularItem.id==id).first()
+    return jsonify(CircularItemSchema().dump(circularItem))
+
+@app.route('/r/circular-item',methods=['POST'])
+def create_circular_item():
+    d = request.json
+    app.logger.info(d)
+
+    circularItem = CircularItem(
+        memberId = d.get('memberId'),
+        person = d.get('person'),
+        departmentId = d.get('departmentId'),
+        confirm = d.get('confirm'),
+        memo = d.get('memo')
+    )
+    db.session.add(circularItem)
+    db.session.commit()
+    id = circularItem.id
+
+    return jsonify({"result": "OK", "id": id, "data": d})
+
 
 @app.route('/r/circular-item/<id>',methods=['PUT'])
 def update_circular_item(id):
@@ -153,7 +183,7 @@ def update_circular_item(id):
     circularItem.person = d.get('person')
     circularItem.departmentId = d.get('departmentId')
     circularItem.confirm = d.get('confirm')
-    circularItem.member = d.get('member')
+    circularItem.memo = d.get('memo')
 
     db.session.commit()
     #id = newCircular.id
@@ -162,17 +192,15 @@ def update_circular_item(id):
 
 @app.route('/r/circular-item/<id>',methods=['DELETE'])
 def delete_circular_item(id):
-    d = request.json
-    app.logger.info(d)
-
+   
     circularItem  = CircularItem.query.filter(CircularItem.id==id).first()
     if not circularItem:
-        return jsonify({"result": "No Data", "id": id, "data": d})
+        return jsonify({"result": "No Data", "id": id, "data": ''})
 
     db.session.delete(circularItem)
     db.session.commit()
 
-    return jsonify({"result": "OK", "id": id, "data": d})
+    return jsonify({"result": "OK", "id": id, "data": ''})
 
 
 if __name__ == '__main__':
