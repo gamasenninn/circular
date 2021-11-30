@@ -304,10 +304,44 @@ class BasicTest(unittest.TestCase):
 
         response = requests.get(f"{base_url}/r/circular/{new_id}")
         self.assertEqual(200,response.status_code)
-        print(response.text)
+        #print(response.text)
         dict_d = json.loads(response.text)
         self.assertFalse(dict_d)
       
+    def test_update_circular_item(self):
+        #print("---- insert data with Items------")
+        data = {
+            'title': "request title for test_update_cirsulat_item",
+            'detail': "detail for update",
+            'dueDate': "2021/12/02",
+            'items': [
+                {'memberId':1,'memo':'01 test_update_cirsulat_item 01'},
+                {'memberId':2,'memo':'02 test_update_cirsulat_item 02'},
+                {'memberId':3,'memo':'03 test_update_cirsulat_item 03'},
+            ]
+        }
+        response = requests.post(
+            f'{base_url}/r/circular',
+            json.dumps(data),
+            headers={'Content-Type': 'application/json'})
+
+        dict_d = json.loads(response.text)
+        new_id = dict_d['id']
+        self.assertEqual(200,response.status_code)
+        self.assertTrue(dict_d)
+        response = requests.get(f"{base_url}/r/circular/{new_id}")
+
+        self.assertTrue(response.text)
+        self.assertEqual(200,response.status_code)
+        dict_d = json.loads(response.text)
+        self.assertTrue(dict_d)
+        # ---- update circular-item ---
+        items = [ item for item in dict_d['items']]
+        print(items)
+
+
+
+
 
 
 if __name__ == '__main__':

@@ -1,13 +1,16 @@
 from api import app
-from api import get_members,get_member,create_member,update_member,delete_member
-from api import get_circulars,get_circular
 
 @app.route('/test')
 def test():
     return "Hello TEST!"
 
+@app.route('/')
+def hello():
+    return "Hello world!"
 
-
+@app.route('/circular')
+def rootn():
+    return app.send_static_file('circular.html')
 
 if __name__ == '__main__':
 
