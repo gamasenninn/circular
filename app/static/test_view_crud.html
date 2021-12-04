@@ -44,8 +44,8 @@
             <div class="mt-2"></div>
             <b-table hover caption-top striped small
                 primary-key = "id"
-                id="clist" sort-by="id" sort-desc=true small head-variant="light"
-                label="Table Options" :items="circulars" :fields="[
+                id="clist" sort-by="id" small head-variant="light"
+                :items="circulars" :fields="[
                         {  key: 'id', label: 'ID',  sortable: true },
                         {  key: 'title', label: '回覧件名' },
                         {  key: 'dueDate', label: '実施日'},
@@ -53,9 +53,6 @@
                       ]">
                 <template v-slot:cell(title)="data">
                     <b-form-input v-model="data.item.title" type="text" size="sm"></b-form-input>
-                </template>
-                <template v-slot:cell(dueDate)="data">
-                    <b-form-input v-model="data.item.dueDate" type="date" size="sm"></b-form-input>
                 </template>
                 <template v-slot:cell(control)="data">
                     <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)">保存</b-button>
@@ -66,17 +63,25 @@
                 </template>
                 <template #row-details="data">
                     <b-card>
-                      <b-row class="mb-2">
-                        <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
-                        <b-col>{{ data.item.createdAt }}</b-col>
-                      </b-row>
-            
-                      <b-row class="mb-2">
-                        <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
-                        <b-col>{{ data.item.updatedAt }}</b-col>
-                      </b-row>
-            
-                      <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>詳細:</b></b-col>
+                            <b-col><b-form-textarea v-model="data.item.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>実施日:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.dueDate" type="date" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                            <b-col>{{ data.item.createdAt }}</b-col>
+                        </b-row>
+                
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                            <b-col>{{ data.item.updatedAt }}</b-col>
+                        </b-row>
+                
+                        <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
                     </b-card>
                   </template>
             </b-table>             
@@ -126,9 +131,9 @@
                     },
                     addRow: function(){
                         this.circulars.push({
-                            id : '',
-                            title: '',
-                            duDate: '',
+                            //id : '',
+                            //title: '',
+                            //duDate: '',
                             isInsert: true
                         })                          
                     }
