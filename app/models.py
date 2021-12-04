@@ -1,6 +1,6 @@
 from app import db,app,ma
-from sqlalchemy.sql.functions import current_timestamp
-
+#from sqlalchemy.sql.functions import current_timestamp
+from datetime import datetime
 
 class Member(db.Model):
     __tablename__ = 'members'
@@ -10,8 +10,11 @@ class Member(db.Model):
     telNumber = db.Column(db.String(20))
     memo = db.Column(db.Text)
     email = db.Column(db.String(120))
-    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updatedAt = db.Column(db.DateTime, nullable=False,
+                          default=datetime.now, onupdate=datetime.now)    
+#    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+#    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
 
     def __repr__(self):
         return f'<Member {self.id},{self.name}>'
@@ -32,8 +35,11 @@ class Circular(db.Model):
     title = db.Column(db.Text)
     detail = db.Column(db.Text)
     dueDate = db.Column(db.Date)
-    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updatedAt = db.Column(db.DateTime, nullable=False,
+                          default=datetime.now, onupdate=datetime.now)    
+#    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+#    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
     items = db.relationship('CircularItem',backref="circulars")
 
     def __repr__(self):
@@ -58,8 +64,11 @@ class CircularItem(db.Model):
     departmentId = db.Column(db.Integer)
     confirm = db.Column(db.String(50))
     memo = db.Column(db.Text)
-    updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
-    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updatedAt = db.Column(db.DateTime, nullable=False,
+                          default=datetime.now, onupdate=datetime.now)    
+    #updatedAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
+    #createdAt = db.Column(db.DateTime(timezone=True), nullable=False, server_default=current_timestamp())
     #circular_id = db.Column(db.Integer)
     circularId = db.Column(db.Integer,db.ForeignKey('circulars.id'))
 

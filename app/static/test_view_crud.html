@@ -62,7 +62,23 @@
                     <b-button v-else @click="updateCircular(data.item)">更新</b-button>
                     <b-button v-if="data.item.isInsert" @click="getCirculars">キャンセル</b-button>
                     <b-button v-else @click="deleteCircular(data.item)">削除</b-button>
+                    <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails">詳細</b-form-checkbox>
                 </template>
+                <template #row-details="data">
+                    <b-card>
+                      <b-row class="mb-2">
+                        <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                        <b-col>{{ data.item.createdAt }}</b-col>
+                      </b-row>
+            
+                      <b-row class="mb-2">
+                        <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                        <b-col>{{ data.item.updatedAt }}</b-col>
+                      </b-row>
+            
+                      <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                    </b-card>
+                  </template>
             </b-table>             
         </div>
 
