@@ -9,8 +9,13 @@ def hello():
     return "Hello world!"
 
 @app.route('/test-view-r')
-def rootn():
+def test_view_r():
     return app.send_static_file('test_view_r.html')
+
+@app.route('/test-view-crud')
+def test_view_crud():
+    return app.send_static_file('test_view_crud.html')
+
 
 if __name__ == '__main__':
 

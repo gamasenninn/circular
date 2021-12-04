@@ -100,7 +100,7 @@ def create_circular():
     newCircular = Circular(
         title = d.get('title'),
         detail = d.get('detail'),
-        dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d"),
+        dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d") if d.get('dueDate') else None,
         items = circularItems,
     )
 
@@ -121,7 +121,7 @@ def update_circular(id):
 
     circular.title = d.get('title')
     circular.detail = d.get('detail')
-    circular.dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d")
+    circular.dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d") if d.get('dueDate') else None
 
     db.session.commit()
     #id = newCircular.id
