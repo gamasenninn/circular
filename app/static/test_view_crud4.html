@@ -150,6 +150,59 @@
             </b-table>             
         </div>
 
+        <div id="appMembers" class="mt-2">
+            <span class="mr-5 h2">Members</span>
+            <b-button @click='getItems'>読み込み</b-button> 
+            <b-button class="ml-2" @click='addRow'>+</b-button> 
+            <div class="mt-2"></div>
+            <b-table hover caption-top striped small
+                primary-key = "id"
+                id="clist" sort-by="id" small head-variant="light"
+                :items="items" :fields="[
+                        {  key: 'id', label: 'ID',  sortable: true },
+                        {  key: 'name', label: '名前' },
+                        {  key: 'telNumber', label: '電話番号'},
+                        {  key: 'email', label: 'メール'},
+                        {  key: 'control', label: '操作'},
+                      ]">
+                <template v-slot:cell(name)="data">
+                    <b-form-input v-model="data.item.name" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(telNumber)="data">
+                    <b-form-input v-model="data.item.telNumber" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(email)="data">
+                    <b-form-input v-model="data.item.email" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(control)="data">
+                    <b-button v-if="data.item.isInsert" @click="insertItem(data.item)">保存</b-button>
+                    <b-button v-else @click="updateItem(data.item)">更新</b-button>
+                    <b-button v-if="data.item.isInsert" @click="getItems">キャンセル</b-button>
+                    <b-button v-else @click="deleteItem(data.item)">削除</b-button>
+                    <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails">詳細</b-form-checkbox>
+                </template>
+                <template #row-details="data">
+                    <b-card>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>メモ:</b></b-col>
+                            <b-col><b-form-textarea v-model="data.item.memo" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                            <b-col>{{ data.item.createdAt }}</b-col>
+                        </b-row>
+                
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                            <b-col>{{ data.item.updatedAt }}</b-col>
+                        </b-row>
+                
+                        <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                    </b-card>
+                  </template>
+            </b-table>             
+        </div>
+
 
         <script>
             // 共通化したメソッド
@@ -220,6 +273,15 @@
                 }
             })
 
+            var appMembers = new Vue({
+                el: '#appMembers',
+                mixins: [mixin],
+                data: {
+                    items: [],
+                    baseUrlItems : "r/members", //呼び出すAPIを指定
+                    baseUrlItem : "r/member",     //呼び出すAPIを指定
+                }
+            })
 
 
 

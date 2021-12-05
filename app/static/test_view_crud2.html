@@ -1,4 +1,8 @@
 <html>
+    <!---
+        より汎用的に書き換えた
+        Table fieldを書き換えるだけで動く
+    -->
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -92,8 +96,8 @@
                 el: '#app',
                 data: {
                     items: [],
-                    baseUrlItems : "r/circulars",
-                    baseUrlItem : "r/circular",
+                    baseUrlItems : "r/circulars", //呼び出すAPIを指定
+                    baseUrlItem : "r/circular",     //呼び出すAPIを指定
                 },
                 methods:{
                     getItems: async function(){
