@@ -20,6 +20,15 @@ def test_view_crud():
 def test_view_crud2():
     return app.send_static_file('test_view_crud2.html')
 
+@app.route('/test-view-crud3')
+def test_view_crud3():
+    return app.send_static_file('test_view_crud3.html')
+
+@app.route('/test-view-crud4')
+def test_view_crud4():
+    return app.send_static_file('test_view_crud4.html')
+
+
 
 if __name__ == '__main__':
 

@@ -1,6 +1,8 @@
 <html>
-    <!--
-        基本的なcrud
+    <!---
+        
+        さらに汎用化して、共通メソッドはmixinでまとめる
+
     -->
     <head>
         <meta charset="utf-8">
@@ -40,15 +42,16 @@
     </head>
     <body>
         Viewレイヤのテスト<br>
-        <div id="app" class="mt-2">
-            <span class="mr-5 h2">Circular</span>
-            <b-button @click='getCirculars'>読み込み</b-button> 
+
+        <div id="appCirculars" class="mt-2">
+            <span class="mr-5 h2">Circulars</span>
+            <b-button @click='getItems'>読み込み</b-button> 
             <b-button class="ml-2" @click='addRow'>+</b-button> 
             <div class="mt-2"></div>
             <b-table hover caption-top striped small
                 primary-key = "id"
                 id="clist" sort-by="id" small head-variant="light"
-                :items="circulars" :fields="[
+                :items="items" :fields="[
                         {  key: 'id', label: 'ID',  sortable: true },
                         {  key: 'title', label: '回覧件名' },
                         {  key: 'dueDate', label: '実施日'},
@@ -58,10 +61,10 @@
                     <b-form-input v-model="data.item.title" type="text" size="sm"></b-form-input>
                 </template>
                 <template v-slot:cell(control)="data">
-                    <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)">保存</b-button>
-                    <b-button v-else @click="updateCircular(data.item)">更新</b-button>
-                    <b-button v-if="data.item.isInsert" @click="getCirculars">キャンセル</b-button>
-                    <b-button v-else @click="deleteCircular(data.item)">削除</b-button>
+                    <b-button v-if="data.item.isInsert" @click="insertItem(data.item)">保存</b-button>
+                    <b-button v-else @click="updateItem(data.item)">更新</b-button>
+                    <b-button v-if="data.item.isInsert" @click="getItems">キャンセル</b-button>
+                    <b-button v-else @click="deleteItem(data.item)">削除</b-button>
                     <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails">詳細</b-form-checkbox>
                 </template>
                 <template #row-details="data">
@@ -90,49 +93,104 @@
             </b-table>             
         </div>
 
+        <div id="appCircularItems" class="mt-2">
+            <span class="mr-5 h2">CircularItems</span>
+            <b-button @click='getItems'>読み込み</b-button> 
+            <b-button class="ml-2" @click='addRow'>+</b-button> 
+            <div class="mt-2"></div>
+            <b-table hover caption-top striped small
+                primary-key = "id"
+                id="clist" sort-by="id" small head-variant="light"
+                :items="items" :fields="[
+                        {  key: 'id', label: 'ID',  sortable: true },
+                        {  key: 'memberId', label: 'm-id' },
+                        {  key: 'person', label: '名前'},
+                        {  key: 'departmentId', label: '部署'},
+                        {  key: 'confirm', label: '確認'},
+                        {  key: 'control', label: '操作'},
+                      ]">
+                <template v-slot:cell(memberId)="data">
+                    <b-form-input v-model="data.item.memberId" type="number" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(person)="data">
+                    <b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(departmentId)="data">
+                    <b-form-input v-model="data.item.departmentId" type="number" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(confirm)="data">
+                    <b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(control)="data">
+                    <b-button v-if="data.item.isInsert" @click="insertItem(data.item)">保存</b-button>
+                    <b-button v-else @click="updateItem(data.item)">更新</b-button>
+                    <b-button v-if="data.item.isInsert" @click="getItems">キャンセル</b-button>
+                    <b-button v-else @click="deleteItem(data.item)">削除</b-button>
+                    <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails">詳細</b-form-checkbox>
+                </template>
+                <template #row-details="data">
+                    <b-card>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>メモ:</b></b-col>
+                            <b-col><b-form-textarea v-model="data.item.memo" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                            <b-col>{{ data.item.createdAt }}</b-col>
+                        </b-row>
+                
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                            <b-col>{{ data.item.updatedAt }}</b-col>
+                        </b-row>
+                
+                        <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                    </b-card>
+                  </template>
+            </b-table>             
+        </div>
+
+
         <script>
-            var app = new Vue({
-                el: '#app',
-                data: {
-                    circulars: [],
-                },
+            // 共通化したメソッド
+            var mixin={
                 methods:{
-                    getCirculars: async function(){
+                    getItems: async function(){
                         self = this;
-                        url = "r/circulars";
+                        url = self.baseUrlItems;
                         await axios.get(url)
                         .then(function (response) {
                             console.log(response);
-                            self.circulars = response.data;
+                            self.items = response.data;
                         });
                     },
-                    insertCircular: async function(item){
-                        url = "r/circular";
+                    insertItem: async function(item){
+                        url = self.baseUrlItem;
                         await axios.post(url, item)
                         .then(function (response) {
                             console.log(response);
-                            self.getCirculars();
+                            self.getItems();
                         });
                     },
 
-                    updateCircular: async function(item){
-                        url = "r/circular/" + item.id;
+                    updateItem: async function(item){
+                        url = self.baseUrlItem + "/" + item.id;
                         await axios.put(url, item)
                         .then(function (response) {
                             console.log(response);
-                            self.getCirculars();
+                            self.getItems();
                         });
                     },
-                    deleteCircular: async function(item){
-                        url = "r/circular/" + item.id;
+                    deleteItem: async function(item){
+                        url = self.baseUrlItem + "/" + item.id;
                         await axios.delete(url)
                         .then(function (response) {
                             console.log(response);
-                            self.getCirculars();
+                            self.getItems();
                         });
                     },
                     addRow: function(){
-                        this.circulars.push({
+                        this.items.push({
                             //id : '',
                             //title: '',
                             //duDate: '',
@@ -140,7 +198,31 @@
                         })                          
                     }
                 }
+            }
+
+            var appCirculars = new Vue({
+                el: '#appCirculars',
+                mixins: [mixin],
+                data: {
+                    items: [],
+                    baseUrlItems : "r/circulars", //呼び出すAPIを指定
+                    baseUrlItem : "r/circular",     //呼び出すAPIを指定
+                }
             })
+
+            var appCircularItems = new Vue({
+                el: '#appCircularItems',
+                mixins: [mixin],
+                data: {
+                    items: [],
+                    baseUrlItems : "r/circular-items", //呼び出すAPIを指定
+                    baseUrlItem : "r/circular-item",     //呼び出すAPIを指定
+                }
+            })
+
+
+
+
         </script>
    
     </body>
