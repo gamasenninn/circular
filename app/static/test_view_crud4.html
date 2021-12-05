@@ -161,12 +161,16 @@
                 :items="items" :fields="[
                         {  key: 'id', label: 'ID',  sortable: true },
                         {  key: 'name', label: '名前' },
+                        {  key: 'category', label: 'カテゴリー' },
                         {  key: 'telNumber', label: '電話番号'},
                         {  key: 'email', label: 'メール'},
                         {  key: 'control', label: '操作'},
                       ]">
                 <template v-slot:cell(name)="data">
                     <b-form-input v-model="data.item.name" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(category)="data">
+                    <b-form-input v-model="data.item.category" type="text" size="sm"></b-form-input>
                 </template>
                 <template v-slot:cell(telNumber)="data">
                     <b-form-input v-model="data.item.telNumber" type="text" size="sm"></b-form-input>

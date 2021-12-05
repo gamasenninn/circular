@@ -27,11 +27,11 @@ def create_member():
     d = request.json
     app.logger.info(d)
     newMember = Member(
-        name = d['name'],
-        category = d['category'],
-        telNumber = d['telNumber'],
-        memo = d['memo'],
-        email = d['email'],
+        name = d.get('name'),
+        category = d.get('category'),
+        telNumber = d.get('telNumber'),
+        memo = d.get('memo'),
+        email = d.get('email'),
     )
     db.session.add(newMember)
     db.session.commit()
@@ -45,11 +45,11 @@ def update_member(id):
     app.logger.info(d)
     member = Member.query.filter(Member.id==id).one()
 
-    member.name = d['name']
-    member.category = d['category']
-    member.telNumber = d['telNumber']
-    member.memo = d['memo']
-    member.email = d['email']
+    member.name = d.get('name')
+    member.category = d.get('category')
+    member.telNumber = d.get('telNumber')
+    member.memo = d.get('memo')
+    member.email = d.get('email')
 
     db.session.commit()
 
