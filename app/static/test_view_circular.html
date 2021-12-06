@@ -47,9 +47,6 @@
             <div class="mt-2"></div>
             <b-table hover caption-top striped small
                 primary-key = "id"
-                select-mode = "single"
-                selectable
-                @row-selected=""
                 id="clist" sort-by="id" small head-variant="light"
                 :items="circulars" :fields="[
                         {  key: 'selectItems', label: '明細'},
@@ -161,26 +158,11 @@
                     },
                     addRow: function(){
                         this.circulars.push({
-                            //id : '',
-                            //title: '',
-                            //duDate: '',
                             isInsert: true
                         })                          
                     },
-                    //onRowSelected(items){
-                    //    this.getCircular(items[0])
-                    //},
                     getCircular: async function(item){
                         this.circular = item
-                        /*
-                        self = this;
-                        url = "r/circular/" + item.id;
-                        await axios.get(url)
-                        .then(function (response) {
-                            console.log(response);
-                            self.circular = response.data;
-                        });
-                        */
                     },
                 },
                 created: function(){
