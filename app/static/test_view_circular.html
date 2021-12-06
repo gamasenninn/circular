@@ -47,22 +47,31 @@
             <div class="mt-2"></div>
             <b-table hover caption-top striped small
                 primary-key = "id"
+                select-mode = "single"
+                selectable
+                @row-selected=""
                 id="clist" sort-by="id" small head-variant="light"
                 :items="circulars" :fields="[
+                        {  key: 'selectItems', label: '明細'},
                         {  key: 'id', label: 'ID',  sortable: true },
                         {  key: 'title', label: '回覧件名' },
                         {  key: 'dueDate', label: '実施日'},
                         {  key: 'control', label: '操作'},
                       ]">
+                <template v-slot:cell(selectItems)="data">
+                    <b-button @click="getCircular(data.item)" size="sm">明細</b-button>
+                </template>
                 <template v-slot:cell(title)="data">
                     <b-form-input v-model="data.item.title" type="text" size="sm"></b-form-input>
                 </template>
                 <template v-slot:cell(control)="data">
-                    <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)">保存</b-button>
-                    <b-button v-else @click="updateCircular(data.item)">更新</b-button>
-                    <b-button v-if="data.item.isInsert" @click="getCirculars">キャンセル</b-button>
-                    <b-button v-else @click="deleteCircular(data.item)">削除</b-button>
-                    <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails">詳細</b-form-checkbox>
+                    <b-form inline>
+                        <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
+                        <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)"  size="sm" class="mr-2">保存</b-button>
+                        <b-button v-else @click="updateCircular(data.item)" class="mr-2" size="sm" >更新</b-button>
+                        <b-button v-if="data.item.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
+                        <b-button v-else @click="deleteCircular(data.item)" class="mr-2" size="sm" >削除</b-button>
+                    </b-form>
                 </template>
                 <template #row-details="data">
                     <b-card>
@@ -97,7 +106,7 @@
             <b-table hover caption-top striped small
                 primary-key = "id"
                 id="itemList" sort-by="id" small head-variant="light"
-                :items="circulars[0].items" :fields="[
+                :items="circular.items" :fields="[
                     {  key: 'id', label: 'ID',  sortable: true },
                     {  key: 'person', label: '名前'},
                     {  key: 'department', label: '部署'},
@@ -157,7 +166,22 @@
                             //duDate: '',
                             isInsert: true
                         })                          
-                    }
+                    },
+                    //onRowSelected(items){
+                    //    this.getCircular(items[0])
+                    //},
+                    getCircular: async function(item){
+                        this.circular = item
+                        /*
+                        self = this;
+                        url = "r/circular/" + item.id;
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            self.circular = response.data;
+                        });
+                        */
+                    },
                 },
                 created: function(){
                     this.getCirculars()
