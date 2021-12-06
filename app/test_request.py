@@ -67,7 +67,7 @@ class BasicTest(unittest.TestCase):
 
         data = {
             'name': "POST FROM WEB",
-            'category': "Web",
+            'department': "Web",
             'telNumber': "000-9999-8888",
             'memo': "POST",
             'email': "mail",
@@ -88,7 +88,7 @@ class BasicTest(unittest.TestCase):
 
         data = {
             'name': "Change POST FROM WEB",
-            'category': "Web",
+            'department': "Web",
             'telNumber': "000-9999-8888",
             'memo': "PUT",
             'email': "mail",
@@ -112,7 +112,7 @@ class BasicTest(unittest.TestCase):
         #---- insert data ------
         data = {
             'name': "POST FROM WEB FOR DELETE",
-            'category': "Web",
+            'department': "Web",
             'telNumber': "000-9999-8888",
             'memo': "POST",
             'email': "mail",

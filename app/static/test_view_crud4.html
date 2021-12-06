@@ -105,7 +105,7 @@
                         {  key: 'id', label: 'ID',  sortable: true },
                         {  key: 'memberId', label: 'm-id' },
                         {  key: 'person', label: '名前'},
-                        {  key: 'departmentId', label: '部署'},
+                        {  key: 'department', label: '部署'},
                         {  key: 'confirm', label: '確認'},
                         {  key: 'control', label: '操作'},
                       ]">
@@ -115,8 +115,8 @@
                 <template v-slot:cell(person)="data">
                     <b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input>
                 </template>
-                <template v-slot:cell(departmentId)="data">
-                    <b-form-input v-model="data.item.departmentId" type="number" size="sm"></b-form-input>
+                <template v-slot:cell(department)="data">
+                    <b-form-input v-model="data.item.department" type="text" size="sm"></b-form-input>
                 </template>
                 <template v-slot:cell(confirm)="data">
                     <b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input>
@@ -161,7 +161,7 @@
                 :items="items" :fields="[
                         {  key: 'id', label: 'ID',  sortable: true },
                         {  key: 'name', label: '名前' },
-                        {  key: 'category', label: 'カテゴリー' },
+                        {  key: 'department', label: '部署' },
                         {  key: 'telNumber', label: '電話番号'},
                         {  key: 'email', label: 'メール'},
                         {  key: 'control', label: '操作'},
@@ -169,8 +169,8 @@
                 <template v-slot:cell(name)="data">
                     <b-form-input v-model="data.item.name" type="text" size="sm"></b-form-input>
                 </template>
-                <template v-slot:cell(category)="data">
-                    <b-form-input v-model="data.item.category" type="text" size="sm"></b-form-input>
+                <template v-slot:cell(department)="data">
+                    <b-form-input v-model="data.item.department" type="text" size="sm"></b-form-input>
                 </template>
                 <template v-slot:cell(telNumber)="data">
                     <b-form-input v-model="data.item.telNumber" type="text" size="sm"></b-form-input>

@@ -28,7 +28,7 @@ def create_member():
     app.logger.info(d)
     newMember = Member(
         name = d.get('name'),
-        category = d.get('category'),
+        department = d.get('department'),
         telNumber = d.get('telNumber'),
         memo = d.get('memo'),
         email = d.get('email'),
@@ -46,7 +46,7 @@ def update_member(id):
     member = Member.query.filter(Member.id==id).one()
 
     member.name = d.get('name')
-    member.category = d.get('category')
+    member.department = d.get('department')
     member.telNumber = d.get('telNumber')
     member.memo = d.get('memo')
     member.email = d.get('email')
@@ -87,7 +87,7 @@ def create_circular():
             CircularItem(
                 memberId = item.get('memberId'),
                 person = item.get('person'),
-                departmentId = item.get('departmentId'),
+                department = item.get('department'),
                 confirm = item.get('confirm'),
                 memo = item.get('memo'),
             )
@@ -159,7 +159,7 @@ def create_circular_item():
     circularItem = CircularItem(
         memberId = d.get('memberId'),
         person = d.get('person'),
-        departmentId = d.get('departmentId'),
+        department = d.get('department'),
         confirm = d.get('confirm'),
         memo = d.get('memo')
     )
@@ -181,7 +181,7 @@ def update_circular_item(id):
 
     circularItem.memberId = d.get('memberId')
     circularItem.person = d.get('person')
-    circularItem.departmentId = d.get('departmentId')
+    circularItem.department = d.get('department')
     circularItem.confirm = d.get('confirm')
     circularItem.memo = d.get('memo')
 

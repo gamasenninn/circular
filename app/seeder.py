@@ -12,11 +12,11 @@ def seeder():
     #------ Member ------
     #print("Seed for Member")
     members = [
-        Member( id=1, name= "小野", telNumber="000-0000-0001" ,category="Web"  ,email="1111@email.xx",memo="memo01"),
-        Member( id=2, name= "佐藤", telNumber="000-0000-0002" ,category="Web"  ,email="2222@email.xx",memo="memo02"),
-        Member( id=3, name= "田中", telNumber="000-0000-0003" ,category="Web"  ,email="3333@email.xx",memo="memo03"),
-        Member( id=4, name= "渡辺", telNumber="000-0000-0004" ,category="shop" ,email="4444@email.xx",memo="memo04"),
-        Member( id=5, name= "小林", telNumber="000-0000-0005" ,category="shop" ,email="5555@email.xx",memo="memo05"),
+        Member( id=1, name= "小野", telNumber="000-0000-0001" ,department="Web"  ,email="1111@email.xx",memo="memo01"),
+        Member( id=2, name= "佐藤", telNumber="000-0000-0002" ,department="Web"  ,email="2222@email.xx",memo="memo02"),
+        Member( id=3, name= "田中", telNumber="000-0000-0003" ,department="Web"  ,email="3333@email.xx",memo="memo03"),
+        Member( id=4, name= "渡辺", telNumber="000-0000-0004" ,department="shop" ,email="4444@email.xx",memo="memo04"),
+        Member( id=5, name= "小林", telNumber="000-0000-0005" ,department="shop" ,email="5555@email.xx",memo="memo05"),
     ]
     db.session.add_all(members)
     db.session.commit()
@@ -42,10 +42,10 @@ def seeder():
     #------ CircularItems ------
     #print("\nSeed for CircularItem")
     circularItems = [
-        CircularItem( id=1, circularId=1, memberId=1, person = '小野', departmentId=1, confirm=True, memo="OK 参加します"  ),
-        CircularItem( id=2, circularId=1, memberId=2, person = '佐藤', departmentId=1, confirm=True, memo="気分しだい"  ),
-        CircularItem( id=3, circularId=1, memberId=2, person = '田中', departmentId=1, confirm=False, memo="体調不良のため"  ),
-        CircularItem( id=4, circularId=2, memberId=1, person = '小野', departmentId=1, confirm=False, memo="法事のため不参加"  ),
+        CircularItem( id=1, circularId=1, memberId=1, person = '小野', department="web", confirm=True, memo="OK 参加します"  ),
+        CircularItem( id=2, circularId=1, memberId=2, person = '佐藤', department="web", confirm=True, memo="気分しだい"  ),
+        CircularItem( id=3, circularId=1, memberId=2, person = '田中', department="shop", confirm=False, memo="体調不良のため"  ),
+        CircularItem( id=4, circularId=2, memberId=1, person = '小野', department="shop", confirm=False, memo="法事のため不参加"  ),
     ]
     db.session.add_all(circularItems)
     db.session.commit()

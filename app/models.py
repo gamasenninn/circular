@@ -6,7 +6,7 @@ class Member(db.Model):
     __tablename__ = 'members'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
-    category = db.Column(db.String(50))
+    department = db.Column(db.String(50))
     telNumber = db.Column(db.String(20))
     memo = db.Column(db.Text)
     email = db.Column(db.String(120))
@@ -19,15 +19,6 @@ class Member(db.Model):
     def __repr__(self):
         return f'<Member {self.id},{self.name}>'
 
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "telNumber": self.telNumber,
-            "memo" : self.memo,
-            "email": self.email,
-            "updatedAt": self.updatedAt, 
-            "createdAt": self.createdAt, 
-        }
 
 class Circular(db.Model):
     __tablename__ = 'circulars'
@@ -45,24 +36,14 @@ class Circular(db.Model):
     def __repr__(self):
         return f'<Circular {self.id},{self.title}>'
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "detail" : self.detail,
-            "dueDate": self.dueDate,
-            "updatedAt": self.updatedAt, 
-            "createdAt": self.createdAt, 
-        }
-
 
 class CircularItem(db.Model):
     __tablename__ = 'circularItems'
     id = db.Column(db.Integer, primary_key=True)
     memberId = db.Column(db.Integer)
     person = db.Column(db.Text)
-    departmentId = db.Column(db.Integer)
-    confirm = db.Column(db.String(50))
+    department = db.Column(db.String(50))
+    confirm = db.Column(db.String(20))
     memo = db.Column(db.Text)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updatedAt = db.Column(db.DateTime, nullable=False,
@@ -74,17 +55,6 @@ class CircularItem(db.Model):
 
     def __repr__(self):
         return f'<CircularItem {self.id},{self.person}>'
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "circularId": self.circularId,
-            "memberId": self.memberId,
-            "person" : self.person,
-            "departmentId": self.departmentId,
-            "confirm": self.confirm,
-            "memo": self.memo,
-        }
 
 
 class MemberSchema(ma.SQLAlchemyAutoSchema):
