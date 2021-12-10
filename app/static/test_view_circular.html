@@ -101,6 +101,7 @@
             </b-table> 
 
             <span class="mr-5 h2">CircularItems</span>
+            <b-button class="ml-2" @click='addRowItem'>+</b-button> 
             <b-table hover caption-top striped small
                 primary-key = "id"
                 id="itemList" sort-by="id" small head-variant="light"
@@ -109,9 +110,60 @@
                     {  key: 'person', label: '名前'},
                     {  key: 'department', label: '部署'},
                     {  key: 'confirm', label: '確認'},
-                    {  key: 'memo', label: 'メモ'},
                     {  key: 'control', label: '操作'},
                   ]"> 
+                  <template v-slot:cell(control)="data">
+                    <b-form inline>
+                        <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
+                        <b-button v-if="data.item.isInsertItem" @click="insertCircularItem(data.item)"  size="sm" class="mr-2">保存</b-button>
+                        <b-button v-else @click="updateCircularItem(data.item)" class="mr-2" size="sm" >更新</b-button>
+                        <b-button v-if="data.item.isInsertItem" @click="getCircularItems" class="mr-2" size="sm" >キャンセル</b-button>
+                        <b-button v-else @click="deleteCircularItem(data.item)" class="mr-2" size="sm" >削除</b-button>
+                    </b-form>
+                </template>
+                <template v-slot:cell(person)="data">
+                    <b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(confirm)="data">
+                    <b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input>
+                </template>
+                <template #row-details="data">
+                    <b-card>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>名前:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>部署:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.department" type="text" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>確認:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>メモ:</b></b-col>
+                            <b-col><b-form-textarea v-model="data.item.memo" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                            <b-col>{{ data.item.createdAt }}</b-col>
+                        </b-row>
+                
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                            <b-col>{{ data.item.updatedAt }}</b-col>
+                        </b-row>
+
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
+                            <b-col>{{ data.item.items }}</b-col>
+                        </b-row>
+                
+                        <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                    </b-card>
+                  </template>
+
             </b-table>
         </div>
 
@@ -120,7 +172,8 @@
                 el: '#app',
                 data: {
                     circulars: [],
-                    circular:[]
+                    circular:[],
+                    //currentCircularId: '',
                 },
                 methods:{
                     getCirculars: async function(){
@@ -165,6 +218,58 @@
                     getCircular: async function(item){
                         this.circular = item
                     },
+                    //--- circularItem ----
+                    getCircularItems: async function(){
+                        self = this;
+                        url = "r/circular-items/"+this.circular.id;
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            self.circular.items = response.data
+                        });
+                    },
+                    updateCircularItem: async function(item){
+                        url = "r/circular-item/" + item.id;
+                        await axios.put(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars();
+                            self.getCircularItems()
+                        });
+
+                    },
+                    deleteCircularItem: async function(item){
+                        url = "r/circular-item/" + item.id;
+                        await axios.delete(url)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars();
+                            self.getCircularItems()
+
+                        });
+                    },
+
+                    insertCircularItem: async function(item){
+                        url = "r/circular-item"
+                        item["circularId"] = this.circular.id
+                        await axios.post(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars();
+                            self.getCircularItems()
+
+                        });
+                    },
+                    addRowItem: function(){
+                        if (this.circular.length === 0){
+                            alert("明細が選択されていません")
+                            return
+                        } 
+                        this.circular.items.push({
+                            isInsertItem: true
+                        })                          
+                    },
+
                 },
                 created: function(){
                     this.getCirculars()

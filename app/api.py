@@ -157,6 +157,7 @@ def create_circular_item():
     app.logger.info(d)
 
     circularItem = CircularItem(
+        circularId = d.get('circularId'),
         memberId = d.get('memberId'),
         person = d.get('person'),
         department = d.get('department'),
