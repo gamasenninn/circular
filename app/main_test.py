@@ -28,6 +28,10 @@ def test_view_crud3():
 def test_view_crud4():
     return app.send_static_file('test_view_crud4.html')
 
+@app.route('/test-view-crud5')
+def test_view_crud5():
+    return app.send_static_file('test_view_crud5.html')
+
 @app.route('/test-view-circular')
 def test_view_circular():
     return app.send_static_file('test_view_circular.html')
