@@ -170,7 +170,8 @@
                         });
                     },
                     insertItem: async function(item){
-                        url = self.baseUrlItem;
+                        self = this;
+                        url = self.baseUrlItem;                        
                         await axios.post(url, item)
                         .then(function (response) {
                             console.log(response);
@@ -179,6 +180,7 @@
                     },
 
                     updateItem: async function(item){
+                        self = this;
                         url = self.baseUrlItem + "/" + item.id;
                         await axios.put(url, item)
                         .then(function (response) {
@@ -187,6 +189,7 @@
                         });
                     },
                     deleteItem: async function(item){
+                        self = this;
                         url = self.baseUrlItem + "/" + item.id;
                         await axios.delete(url)
                         .then(function (response) {
@@ -196,9 +199,6 @@
                     },
                     addRow: function(){
                         this.items.push({
-                            //id : '',
-                            //title: '',
-                            //duDate: '',
                             isInsert: true
                         })                          
                     }
@@ -216,7 +216,8 @@
                 methods:{
                     selectDetails: function(item){
                         console.log(item)
-                        appCircularItems.items = item.items.map(i => ({ ...i, circularId: item.id }));
+                        appCircularItems.selectCircularId = item.id
+                        appCircularItems.getItems()
                     }
                     
                 }
@@ -227,8 +228,35 @@
                 mixins: [mixin],
                 data: {
                     items: [],
+                    selectCircularId : '',
                     baseUrlItems : "r/circular-items", //呼び出すAPIを指定
                     baseUrlItem : "r/circular-item",     //呼び出すAPIを指定
+                },
+                methods:{
+                    getItems: async function(){
+                        self = this;
+                        if (this.selectCircularId === ''){
+                            alert("行が選択されていません")
+                            return
+                        }
+                        //circularId = this.items[0]['circularId']
+                        url = self.baseUrlItems+"/"+this.selectCircularId;
+                        
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            self.items = response.data.map(i => ({ ...i, circularId: this.circularId }));
+                        });
+                    },
+                    insertItem: async function(item){
+                        url = self.baseUrlItem;
+                        item['circularId'] = this.selectCircularId
+                        await axios.post(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            self.getItems();
+                        });
+                    },
                 }
             })
 

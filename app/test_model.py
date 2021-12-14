@@ -166,7 +166,7 @@ class BasicTest(unittest.TestCase):
         self.assertGreaterEqual(len(circular.items),3)
         #---　データを1件更新する -- 
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
-        #pprint(CircularItemSchema().dump(circularItem))
+        pprint(CircularItemSchema().dump(circularItem))
         circularItem.memo = "update memo"
         db.session.commit()
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
