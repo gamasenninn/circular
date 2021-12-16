@@ -36,6 +36,10 @@ def test_view_crud5():
 def test_view_circular():
     return app.send_static_file('test_view_circular.html')
 
+@app.route('/test-view-circular2')
+def test_view_circular2():
+    return app.send_static_file('test_view_circular2.html')
+
 
 if __name__ == '__main__':
 
