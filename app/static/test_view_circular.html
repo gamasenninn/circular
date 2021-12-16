@@ -100,7 +100,26 @@
                   </template>
             </b-table> 
 
-            <span class="mr-5 h2">CircularItems</span>
+            <div class="mr-5 h2">CircularItems</div>
+            <b-card>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>ID:</b></b-col>
+                    <b-col>{{circular.id}}</b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>回覧件名:</b></b-col>
+                    <b-col><b-form-textarea v-model="circular.title" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>詳細:</b></b-col>
+                    <b-col><b-form-textarea v-model="circular.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>実施日:</b></b-col>
+                    <b-col><b-form-input v-model="circular.dueDate" type="date" size="sm"></b-form-input></b-col>
+                </b-row>
+            </b-card>
+
             <b-button class="ml-2" @click='addRowItem'>+</b-button> 
             <b-table hover caption-top striped small
                 primary-key = "id"
@@ -183,6 +202,7 @@
                         .then(function (response) {
                             console.log(response);
                             self.circulars = response.data;
+                            self.circular = [];
                         });
                     },
                     insertCircular: async function(item){
@@ -213,7 +233,8 @@
                     addRow: function(){
                         this.circulars.push({
                             isInsert: true
-                        })                          
+                        })
+                        circular = []                          
                     },
                     getCircular: async function(item){
                         this.circular = item

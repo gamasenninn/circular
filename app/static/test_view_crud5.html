@@ -222,7 +222,6 @@
                     
                 }
             })
-
             var appCircularItems = new Vue({
                 el: '#appCircularItems',
                 mixins: [mixin],
@@ -245,7 +244,8 @@
                         await axios.get(url)
                         .then(function (response) {
                             console.log(response);
-                            self.items = response.data.map(i => ({ ...i, circularId: this.circularId }));
+                            //self.items = response.data.map(i => ({ ...i, circularId: this.circularId }));
+                            self.items = response.data;
                         });
                     },
                     insertItem: async function(item){

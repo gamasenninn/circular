@@ -65,7 +65,7 @@ class MemberSchema(ma.SQLAlchemyAutoSchema):
 class CircularItemSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = CircularItem
-#        include_fk = True
+        include_fk = True
 
 class CircularSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
