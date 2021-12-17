@@ -199,7 +199,7 @@
                 data: {
                     circulars: [],
                     circular:[],
-                    isInsertCircular: false,
+                    isInsertCircular: false, //Circular新規処理のため
                     //currentCircularId: '',
                 },
                 methods:{
@@ -210,8 +210,8 @@
                         .then(function (response) {
                             console.log(response);
                             self.circulars = response.data;
-                            self.circular = [];
-                            self.isInsertCircular = false
+                            self.circular = []; //　初期状態に戻しておく
+                            self.isInsertCircular = false //新規処理フラグをfalseにする
                         });
                     },
                     insertCircular: async function(item){
@@ -228,7 +228,7 @@
                         await axios.put(url, item)
                         .then(function (response) {
                             console.log(response);
-                            //self.getCirculars();
+                            //self.getCirculars(); //更新の場合はアクセスを減らすため再読み込みはしない（してもよい）。
                         });
                     },
                     deleteCircular: async function(item){
@@ -244,10 +244,12 @@
                             isInsert: true
                         })
                         this.circular = this.circulars.slice(-1)[0]
-                        this.isInsertCircular = true
+                        this.isInsertCircular = true //詳細画面側の保存ボタン表示のため
                         //circular = []                          
                     },
                     getCircular: async function(item){
+                        //選択されたレコードをcircularに同期させる。
+                        //これにより、　circulars の選択行が circularに同期する。
                         this.circular = item
                     },
                     //--- circularItem ----
@@ -297,6 +299,7 @@
                             alert("明細が選択されていません")
                             return
                         } 
+                        //明細行の新規処理のため、新規処理フラグをONにして空行を追加する
                         this.circular.items.push({
                             isInsertItem: true
                         })                          
