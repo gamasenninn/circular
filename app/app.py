@@ -11,7 +11,7 @@ app.config.from_object('config.Config')
 #app.config['SQLALCHEMY_ECHO'] = False
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-ma = Marshmallow()
+ma = Marshmallow(app)
 
 #migrate = Migrate(app,db)
 migrate = Migrate(app,db,render_as_batch=True)
