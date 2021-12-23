@@ -1,0 +1,326 @@
+<html>
+    <!--
+        基本的なcrudに明細を加えたもの
+    -->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--
+        <link href="images/favicon.ico" rel="shortcut icon">
+        -->
+        <title>Test View</title>
+        <!-- Load required Bootstrap and BootstrapVue CSS -->
+
+        <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue.min.css" />
+
+        <!-- Load fontawesome -->
+        <!-- link href="./css/all.css" rel="stylesheet" -->
+        <!--load all styles -->
+        <!-- <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
+        <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
+
+        <!-- Load polyfills to support older browsers -->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"
+        crossorigin="anonymous"></script>
+
+        <!-- Load Vue followed by BootstrapVue -->
+        <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue.min.js"></script>
+
+        <!-- Load the following for BootstrapVueIcons support -->
+        <script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue-icons.min.js"></script>
+
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        Viewレイヤのテスト<br>
+        <div id="app" class="mt-2">
+            <template v-if="isList">
+                <span class="mr-5 h2">Circular</span>
+                <b-button @click='getCirculars'>読み込み</b-button> 
+                <b-button class="ml-2" @click='addRow'>+</b-button> 
+                <div class="mt-2"></div>
+                <b-table hover caption-top striped small
+                    primary-key = "id"
+                    id="clist" sort-by="id" small head-variant="light"
+                    :items="circulars" :fields="[
+                            {  key: 'selectItems', label: '明細'},
+                            {  key: 'id', label: 'ID',  sortable: true },
+                            {  key: 'title', label: '回覧件名' },
+                            {  key: 'dueDate', label: '実施日'},
+                            {  key: 'control', label: '操作'},
+                          ]">
+                    <template v-slot:cell(selectItems)="data">
+                        <b-button @click="getCircular(data.item)" size="sm">明細</b-button>
+                    </template>
+                    <template v-slot:cell(title)="data">
+                        <b-form-input v-model="data.item.title" type="text" size="sm"></b-form-input>
+                    </template>
+                    <template v-slot:cell(control)="data">
+                        <b-form inline>
+                            <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
+                            <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)"  size="sm" class="mr-2">保存</b-button>
+                            <b-button v-else @click="updateCircular(data.item)" class="mr-2" size="sm" >更新</b-button>
+                            <b-button v-if="data.item.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
+                            <b-button v-else @click="deleteCircular(data.item)" class="mr-2" size="sm" >削除</b-button>
+                        </b-form>
+                    </template>
+                    <template #row-details="data">
+                        <b-card>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>詳細:</b></b-col>
+                                <b-col><b-form-textarea v-model="data.item.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>実施日:</b></b-col>
+                                <b-col><b-form-input v-model="data.item.dueDate" type="date" size="sm"></b-form-input></b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                                <b-col>{{ data.item.createdAt }}</b-col>
+                            </b-row>
+                    
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                                <b-col>{{ data.item.updatedAt }}</b-col>
+                            </b-row>
+    
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
+                                <b-col>{{ data.item.items }}</b-col>
+                            </b-row>
+                    
+                            <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                        </b-card>
+                      </template>
+                </b-table>     
+            </template>
+
+            <template v-if="isDetail">
+                <b-button @click="isDetail=false;isList=true">＜</b-button>
+                <div class="mr-5 h2">CircularItems</div>
+                <b-card>
+                    <b-row class="mb-2">
+                        <b-col sm="2" class="text-sm-left"><b>ID:</b></b-col>
+                        <b-col>{{circular.id}}</b-col>
+                    </b-row>
+                    <b-row class="mb-2">
+                        <b-col sm="2" class="text-sm-left"><b>回覧件名:</b></b-col>
+                        <b-col><b-form-textarea v-model="circular.title" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                    </b-row>
+                    <b-row class="mb-2">
+                        <b-col sm="2" class="text-sm-left"><b>詳細:</b></b-col>
+                        <b-col><b-form-textarea v-model="circular.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                    </b-row>
+                    <b-row class="mb-2">
+                        <b-col sm="2" class="text-sm-left"><b>実施日:</b></b-col>
+                        <b-col><b-form-input v-model="circular.dueDate" type="date" size="sm"></b-form-input></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-button v-if="circular.isInsert" @click="insertCircular(circular)"  size="sm" class="mr-2">保存</b-button>
+                        <b-button v-else @click="updateCircular(circular)" class="mr-2" size="sm" >更新</b-button>
+                        <b-button v-if="circular.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
+                        <b-button v-else @click="deleteCircular(circular)" class="mr-2" size="sm" >削除</b-button>    
+                    </b-row>
+    
+                </b-card>
+    
+                <b-button class="ml-2" @click='addRowItem'>+</b-button> 
+                <b-table hover caption-top striped small
+                    primary-key = "id"
+                    id="itemList" sort-by="id" small head-variant="light"
+                    :items="circular.items" :fields="[
+                        {  key: 'id', label: 'ID',  sortable: true },
+                        {  key: 'person', label: '名前'},
+                        {  key: 'department', label: '部署'},
+                        {  key: 'confirm', label: '確認'},
+                        {  key: 'control', label: '操作'},
+                      ]"> 
+                      <template v-slot:cell(control)="data">
+                        <b-form inline>
+                            <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
+                            <b-button v-if="data.item.isInsertItem" @click="insertCircularItem(data.item)"  size="sm" class="mr-2">保存</b-button>
+                            <b-button v-else @click="updateCircularItem(data.item)" class="mr-2" size="sm" >更新</b-button>
+                            <b-button v-if="data.item.isInsertItem" @click="getCircularItems" class="mr-2" size="sm" >キャンセル</b-button>
+                            <b-button v-else @click="deleteCircularItem(data.item)" class="mr-2" size="sm" >削除</b-button>
+                        </b-form>
+                    </template>
+                    <template v-slot:cell(person)="data">
+                        <b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input>
+                    </template>
+                    <template v-slot:cell(confirm)="data">
+                        <b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input>
+                    </template>
+                    <template #row-details="data">
+                        <b-card>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>名前:</b></b-col>
+                                <b-col><b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input></b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>部署:</b></b-col>
+                                <b-col><b-form-input v-model="data.item.department" type="text" size="sm"></b-form-input></b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>確認:</b></b-col>
+                                <b-col><b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input></b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>メモ:</b></b-col>
+                                <b-col><b-form-textarea v-model="data.item.memo" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                            </b-row>
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                                <b-col>{{ data.item.createdAt }}</b-col>
+                            </b-row>
+                    
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                                <b-col>{{ data.item.updatedAt }}</b-col>
+                            </b-row>
+    
+                            <b-row class="mb-2">
+                                <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
+                                <b-col>{{ data.item.items }}</b-col>
+                            </b-row>
+                    
+                            <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                        </b-card>
+                      </template>
+    
+                </b-table>
+    
+            </template>
+        </div>
+
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    circulars: [],
+                    circular:[],
+                    isInsertCircular: false, //Circular新規処理のため
+                    isList : true,
+                    isDetail : false,
+                    //currentCircularId: '',
+                },
+                methods:{
+                    getCirculars: async function(){
+                        self = this;
+                        url = "r/circulars";
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            self.circulars = response.data;
+                            self.circular = []; //　初期状態に戻しておく
+                            self.isInsertCircular = false //新規処理フラグをfalseにする
+                        });
+                    },
+                    insertCircular: async function(item){
+                        url = "r/circular";
+                        await axios.post(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            self.getCirculars();
+                        });
+                    },
+
+                    updateCircular: async function(item){
+                        url = "r/circular/" + item.id;
+                        await axios.put(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars(); //更新の場合はアクセスを減らすため再読み込みはしない（してもよい）。
+                        });
+                    },
+                    deleteCircular: async function(item){
+                        url = "r/circular/" + item.id;
+                        await axios.delete(url)
+                        .then(function (response) {
+                            console.log(response);
+                            self.getCirculars();
+                        });
+                    },
+                    addRow: function(){
+                        this.circulars.push({
+                            isInsert: true
+                        })
+                        this.circular = this.circulars.slice(-1)[0]
+                        this.isInsertCircular = true //詳細画面側の保存ボタン表示のため
+                        //circular = []                          
+                    },
+                    getCircular: async function(item){
+                        //選択されたレコードをcircularに同期させる。
+                        //これにより、　circulars の選択行が circularに同期する。
+                        this.circular = item
+                        this.isList = false;
+                        this.isDetail = true;
+                    },
+                    //--- circularItem ----
+                    getCircularItems: async function(){
+                        self = this;
+                        url = "r/circular-items/"+this.circular.id;
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            self.circular.items = response.data
+                        });
+                    },
+                    updateCircularItem: async function(item){
+                        url = "r/circular-item/" + item.id;
+                        await axios.put(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars();
+                            self.getCircularItems()
+                        });
+
+                    },
+                    deleteCircularItem: async function(item){
+                        url = "r/circular-item/" + item.id;
+                        await axios.delete(url)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars();
+                            self.getCircularItems()
+
+                        });
+                    },
+
+                    insertCircularItem: async function(item){
+                        url = "r/circular-item"
+                        item["circularId"] = this.circular.id
+                        await axios.post(url, item)
+                        .then(function (response) {
+                            console.log(response);
+                            //self.getCirculars();
+                            self.getCircularItems()
+
+                        });
+                    },
+                    addRowItem: function(){
+                        if (this.circular.length === 0){
+                            alert("明細が選択されていません")
+                            return
+                        } 
+                        //明細行の新規処理のため、新規処理フラグをONにして空行を追加する
+                        this.circular.items.push({
+                            isInsertItem: true
+                        })                          
+                    },
+
+                },
+                created: function(){
+                    this.getCirculars()
+                }
+            })
+        </script>
+   
+    </body>
+  </html>
