@@ -24,6 +24,10 @@ def test_view_circular2():
 def test_view_circular3():
     return app.send_static_file('test_view_circular3.html')
 
+@app.route('/test-view-circular4')
+def test_view_circular4():
+    return app.send_static_file('test_view_circular4.html')
+
 @app.route('/test-view-circular5')
 def test_view_circular5():
     return app.send_static_file('test_view_circular5.html')
