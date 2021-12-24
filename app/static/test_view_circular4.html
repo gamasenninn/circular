@@ -242,7 +242,8 @@
                     },
                     addRow: function(){
                         this.circulars.push({
-                            isInsert: true
+                            isInsert: true,
+                            items:[]  //これをやらないとpushができない。
                         })
                         this.circular = this.circulars.slice(-1)[0]
                         this.isInsertCircular = true //詳細画面側の保存ボタン表示のため
@@ -307,8 +308,10 @@
                     },
                     rowClass(item,type){
                         if (!item || type !== 'row') return
-                        if (item.id === 1) return "style='display: none'"                        
+                        if (!item.id) return "d-none"                        
+                        // OK  if (item.id === 1) return "d-none"                        
                         //if (item.id === 1) return 'table-success'
+                        //if (item.id === 1) return false
                     }
 
                 },
