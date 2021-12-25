@@ -166,7 +166,7 @@ class BasicTest(unittest.TestCase):
         self.assertGreaterEqual(len(circular.items),3)
         #---　データを1件更新する -- 
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
-        pprint(CircularItemSchema().dump(circularItem))
+        #pprint(CircularItemSchema().dump(circularItem))
         circularItem.memo = "update memo"
         db.session.commit()
         circularItem = CircularItem.query.filter(CircularItem.circularId==new_id and memberId==1).first()
@@ -195,6 +195,74 @@ class BasicTest(unittest.TestCase):
         circular = CircularItem.query.filter(CircularItem.circularId==new_id).first()
         self.assertFalse(circular)
 
+
+    def test_bulk_save_circular(self):
+        # bulk_save_objectsが使えるかどうか
+        circular = Circular(title="new-bulk_01 circular",detail="new bulk 01 detail",dueDate=datetime.datetime.strptime("2021/12/01", "%Y/%m/%d"))
+        db.session.bulk_save_objects([circular])
+        db.session.commit()
+        self.assertEqual(len(Circular.query.filter(Circular.title.like("%new-bulk_01%")).all()),1)
+
+        # bulk_save_objectsでitemsも登録できるかどうか
+        circular = Circular(title="new-bulk_02 circular",detail="new bulk 02 detail",dueDate=datetime.datetime.strptime("2021/12/01", "%Y/%m/%d"))
+        db.session.add(circular)
+        db.session.commit()
+        self.assertEqual(len(Circular.query.filter(Circular.title.like("%new-bulk_02%")).all()),1)
+        print("circularId:",circular.id)
+
+        circularItems = [
+            CircularItem(id=91,circularId=circular.id,memberId=1,memo="memo-bulk-41"),
+            CircularItem(id=92,circularId=circular.id,memberId=1,memo="memo--bulk-42"),
+            CircularItem(id=93,circularId=circular.id,memberId=3,memo="memo--bulk-43")
+        ]
+        db.session.bulk_save_objects(circularItems)
+        db.session.commit()
+
+        circularItems = [
+            CircularItem(id=92,circularId=circular.id,memberId=9,memo="memo-bulk-41-2").query.filter(CircularItem.id==92).first()
+        ]
+        db.session.bulk_save_objects(circularItems)
+        db.session.commit()
+
+        result =  CircularItem.query.filter(CircularItem.id==92).first()
+        self.assertEqual( result.id ,92)
+
+        result =  Circular.query.filter(Circular.id==circular.id).first()
+        pprint( CircularSchema().dump(result))
+
+
+
+
+#        print("id:",circularItems[0][].CircularItem.id)
+        #print("221 itemId:",itemId)
+
+        result =  CircularItem.query.filter(CircularItem.id==91).first()
+        self.assertEqual( result.id ,91)
+        #pprint(resultCircular)
+        #pprint( CircularSchema().dump(resultCircular))
+
+        # 登録したものから一つを更新してみる
+        circularItem =  CircularItem.query.filter(CircularItem.id==91).first()
+        circularItem.memberId = 2
+        circularItem.memo = "Update by sabe_objects 91"
+        db.session.bulk_save_objects([circularItem])
+        db.session.commit()
+        result =  Circular.query.filter(Circular.id==circular.id).first()
+        #pprint( CircularSchema().dump(result))
+        self.assertEqual( result.items[0].memberId,2)
+        self.assertEqual( result.items[0].memo,"Update by sabe_objects 91")
+
+
+        #--- circular 1件目を更新　-----
+        #print("--- Member更新 --")
+        '''
+        member = Member.query.filter(Member.id==2).first()
+        member.email = "xxx"
+        db.session.commit()
+
+        member = Member.query.filter(Member.id==2).first()
+        self.assertGreaterEqual(member.email,"xxx")
+        '''
 
 
 if __name__ == '__main__':
