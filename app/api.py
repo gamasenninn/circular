@@ -128,16 +128,22 @@ def update_circular(id):
     if d.get('items'):
         update_list = []
         insert_list = []
+        delete_in_list = []
         for item in d['items']:
             if 'createdAt' in item : del(item['createdAt'])
             if 'updatedAt' in item : del(item['updatedAt'])
+
             if item.get('id'):
                 update_list.append(item)
             else:
                 insert_list.append(item)
 
+            if item.get('isDelete'):
+                delete_in_list.append(item['id'])
+
         db.session.bulk_update_mappings(CircularItem,update_list)
         db.session.bulk_insert_mappings(CircularItem,insert_list)
+        db.session.query(CircularItem).filter(CircularItem.id.in_(delete_in_list)).delete(synchronize_session='fetch')
 
 
     db.session.commit()
