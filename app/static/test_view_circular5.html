@@ -224,7 +224,6 @@
                             item.isInsert = false //新規処理フラグをfalseにする
                         });
                     },
-
                     updateCircular: async function(item){
                         url = "r/circular/" + item.id;
                         await axios.put(url, item)
@@ -261,33 +260,18 @@
                         await axios.get(url)
                         .then(function (response) {
                             console.log(response);
-                            // すでに存在するcircularの示すアドレスに取得した値をassignする。これにより同期。
-                            //self.circular = Object.assign({},response.data)
-                            self.$set(self.circular,0,response.data)
-                            self.$set(self.circular,'items',response.data.items)
-                            //Vue.set(self.circular,'items',response.data.items) 
+                            // すでに存在するcircularの示すアドレスに取得した値を同期。
+                            //　これが最大ポイント
+                            self.$set(self.$data,'circular',response.data)
                         });
                     },
                     //--- circularItem ----
-                    /*
-                    getCircularItems: async function(){
-                        self = this;
-                        url = "r/circular-items/"+this.circular.id;
-                        await axios.get(url)
-                        .then(function (response) {
-                            console.log(response);
-                            self.circular.items = response.data
-                        });
-                    },
-                    */
                     updateCircularItem: async function(item){
                         self = this
                         url = "r/circular-item/" + item.id;
                         await axios.put(url, item)
                         .then(function (response) {
                             console.log(response);
-                            //self.getCirculars();
-                            //self.getCircularItems()
                             self.getCircular(self.circular);
                         });
 
@@ -297,10 +281,7 @@
                         await axios.delete(url)
                         .then(function (response) {
                             console.log(response);
-                            //self.getCirculars();
-                            //self.getCircularItems()
                             self.getCircular(self.circular);
-
                         });
                     },
 
@@ -312,7 +293,6 @@
                         .then(function (response) {
                             console.log(response);
                             self.getCircular(self.circular);
-                            //self.getCircularItems()
 
                         });
                     },
@@ -329,11 +309,7 @@
                     rowClass(item,type){
                         if (!item || type !== 'row') return
                         if (!item.id) return "d-none"                        
-                        // OK  if (item.id === 1) return "d-none"                        
-                        //if (item.id === 1) return 'table-success'
-                        //if (item.id === 1) return false
                     }
-
                 },
                 created: function(){
                     this.getCirculars()
