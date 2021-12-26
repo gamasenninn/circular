@@ -58,7 +58,7 @@
                 :tbody-tr-class="rowClass"
                 >
                 <template v-slot:cell(selectItems)="data">
-                    <b-button @click="getCircular(data.item)" size="sm">明細</b-button>
+                    <b-button @click="selectCircular(data.item)" size="sm">明細</b-button>
                 </template>
                 <template v-slot:cell(control)="data">
                     <b-form inline>
@@ -220,6 +220,7 @@
                             console.log(response);
                             //self.getCirculars();
                             Vue.set(self.circular,'id',response.data.id) //これをやらないと画面に反映されない。
+                            self.getCircular(self.circular)
                             item.isInsert = false //新規処理フラグをfalseにする
                         });
                     },
@@ -249,10 +250,20 @@
                         this.isInsertCircular = true //詳細画面側の保存ボタン表示のため
                         //circular = []                          
                     },
-                    getCircular: async function(item){
+                    selectCircular: async function(item){
                         //選択されたレコードをcircularに同期させる。
                         //これにより、　circulars の選択行が circularに同期する。
                         this.circular = item
+                    },
+                    getCircular: async function(item){
+                        self = this
+                        url = "r/circular/"+item.id;
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            // すでに存在するcircularの示すアドレスに取得した値をassignする。これにより同期。
+                            self.circular = object.assign({},response.data) 
+                        });
                     },
                     //--- circularItem ----
                     getCircularItems: async function(){
@@ -271,6 +282,7 @@
                             console.log(response);
                             //self.getCirculars();
                             self.getCircularItems()
+                            //self.getCircular(item);
                         });
 
                     },

@@ -41,162 +41,157 @@
     <body>
         Viewレイヤのテスト<br>
         <div id="app" class="mt-2">
-            <template v-if="isList">
-                <span class="mr-5 h2">Circular</span>
-                <b-button @click='getCirculars'>読み込み</b-button> 
-                <b-button class="ml-2" @click='addRow'>+</b-button> 
-                <div class="mt-2"></div>
-                <b-table hover caption-top striped small
-                    primary-key = "id"
-                    id="clist" sort-by="id" small head-variant="light"
-                    :items="circulars" :fields="[
-                            {  key: 'selectItems', label: '明細'},
-                            {  key: 'id', label: 'ID',  sortable: true },
-                            {  key: 'title', label: '回覧件名' },
-                            {  key: 'dueDate', label: '実施日'},
-                            {  key: 'control', label: '操作'},
-                          ]">
-                    <template v-slot:cell(selectItems)="data">
-                        <b-button @click="getCircular(data.item)" size="sm">明細</b-button>
-                    </template>
-                    <template v-slot:cell(title)="data">
-                        <b-form-input v-model="data.item.title" type="text" size="sm"></b-form-input>
-                    </template>
-                    <template v-slot:cell(control)="data">
-                        <b-form inline>
-                            <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
-                            <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)"  size="sm" class="mr-2">保存</b-button>
-                            <b-button v-else @click="updateCircular(data.item)" class="mr-2" size="sm" >更新</b-button>
-                            <b-button v-if="data.item.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
-                            <b-button v-else @click="deleteCircular(data.item)" class="mr-2" size="sm" >削除</b-button>
-                        </b-form>
-                    </template>
-                    <template #row-details="data">
-                        <b-card>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>詳細:</b></b-col>
-                                <b-col><b-form-textarea v-model="data.item.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
-                            </b-row>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>実施日:</b></b-col>
-                                <b-col><b-form-input v-model="data.item.dueDate" type="date" size="sm"></b-form-input></b-col>
-                            </b-row>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
-                                <b-col>{{ data.item.createdAt }}</b-col>
-                            </b-row>
-                    
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
-                                <b-col>{{ data.item.updatedAt }}</b-col>
-                            </b-row>
-    
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
-                                <b-col>{{ data.item.items }}</b-col>
-                            </b-row>
-                    
-                            <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
-                        </b-card>
-                      </template>
-                </b-table>     
-            </template>
-
-            <template v-if="isDetail">
-                <b-button @click="isDetail=false;isList=true">＜</b-button>
-                <div class="mr-5 h2">CircularItems</div>
-                <b-card>
-                    <b-row class="mb-2">
-                        <b-col sm="2" class="text-sm-left"><b>ID:</b></b-col>
-                        <b-col>{{circular.id}}</b-col>
-                    </b-row>
-                    <b-row class="mb-2">
-                        <b-col sm="2" class="text-sm-left"><b>回覧件名:</b></b-col>
-                        <b-col><b-form-textarea v-model="circular.title" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
-                    </b-row>
-                    <b-row class="mb-2">
-                        <b-col sm="2" class="text-sm-left"><b>詳細:</b></b-col>
-                        <b-col><b-form-textarea v-model="circular.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
-                    </b-row>
-                    <b-row class="mb-2">
-                        <b-col sm="2" class="text-sm-left"><b>実施日:</b></b-col>
-                        <b-col><b-form-input v-model="circular.dueDate" type="date" size="sm"></b-form-input></b-col>
-                    </b-row>
-                    <b-row>
-                        <b-button v-if="circular.isInsert" @click="insertCircular(circular)"  size="sm" class="mr-2">保存</b-button>
-                        <b-button v-else @click="updateCircular(circular)" class="mr-2" size="sm" >更新</b-button>
-                        <b-button v-if="circular.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
-                        <b-button v-else @click="deleteCircular(circular)" class="mr-2" size="sm" >削除</b-button>    
-                    </b-row>
-    
-                </b-card>
-    
-                <b-button class="ml-2" @click='addRowItem'>+</b-button> 
-                <b-table hover caption-top striped small
-                    primary-key = "id"
-                    id="itemList" sort-by="id" small head-variant="light"
-                    :items="circular.items" :fields="[
+            <span class="mr-5 h2">Circular</span>
+            <b-button @click='getCirculars'>読み込み</b-button> 
+            <b-button class="ml-2" @click='addRow'>+</b-button> 
+            <div class="mt-2"></div>
+            <b-table hover caption-top striped small
+                primary-key = "id"
+                id="clist" sort-by="id" small head-variant="light"
+                :items="circulars" :fields="[
+                        {  key: 'selectItems', label: '明細'},
                         {  key: 'id', label: 'ID',  sortable: true },
-                        {  key: 'person', label: '名前'},
-                        {  key: 'department', label: '部署'},
-                        {  key: 'confirm', label: '確認'},
+                        {  key: 'title', label: '回覧件名' },
+                        {  key: 'dueDate', label: '実施日'},
                         {  key: 'control', label: '操作'},
-                      ]"> 
-                      <template v-slot:cell(control)="data">
-                        <b-form inline>
-                            <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
-                            <b-button v-if="data.item.isInsertItem" @click="insertCircularItem(data.item)"  size="sm" class="mr-2">保存</b-button>
-                            <b-button v-else @click="updateCircularItem(data.item)" class="mr-2" size="sm" >更新</b-button>
-                            <b-button v-if="data.item.isInsertItem" @click="getCircularItems" class="mr-2" size="sm" >キャンセル</b-button>
-                            <b-button v-else @click="deleteCircularItem(data.item)" class="mr-2" size="sm" >削除</b-button>
-                        </b-form>
-                    </template>
-                    <template v-slot:cell(person)="data">
-                        <b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input>
-                    </template>
-                    <template v-slot:cell(confirm)="data">
-                        <b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input>
-                    </template>
-                    <template #row-details="data">
-                        <b-card>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>名前:</b></b-col>
-                                <b-col><b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input></b-col>
-                            </b-row>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>部署:</b></b-col>
-                                <b-col><b-form-input v-model="data.item.department" type="text" size="sm"></b-form-input></b-col>
-                            </b-row>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>確認:</b></b-col>
-                                <b-col><b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input></b-col>
-                            </b-row>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>メモ:</b></b-col>
-                                <b-col><b-form-textarea v-model="data.item.memo" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
-                            </b-row>
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
-                                <b-col>{{ data.item.createdAt }}</b-col>
-                            </b-row>
-                    
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
-                                <b-col>{{ data.item.updatedAt }}</b-col>
-                            </b-row>
-    
-                            <b-row class="mb-2">
-                                <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
-                                <b-col>{{ data.item.items }}</b-col>
-                            </b-row>
-                    
-                            <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
-                        </b-card>
-                      </template>
-    
-                </b-table>
-    
-            </template>
+                      ]"
+                :tbody-tr-class="rowClass"
+                >
+                <template v-slot:cell(selectItems)="data">
+                    <b-button @click="selectCircular(data.item)" size="sm">明細</b-button>
+                </template>
+                <template v-slot:cell(control)="data">
+                    <b-form inline>
+                        <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
+<!--
+                        <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)"  size="sm" class="mr-2">保存</b-button>
+                        <b-button v-else @click="updateCircular(data.item)" class="mr-2" size="sm" >更新</b-button>
+                        <b-button v-if="data.item.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
+                        <b-button v-else @click="deleteCircular(data.item)" class="mr-2" size="sm" >削除</b-button>
+-->
+                    </b-form>
+                </template>
+                <template #row-details="data">
+                    <b-card>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>詳細:</b></b-col>
+                            <b-col>{{ data.item.detail }}</b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>実施日:</b></b-col>
+                            <b-col>{{ data.item.dueDate }}</b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                            <b-col>{{ data.item.createdAt }}</b-col>
+                        </b-row>
+                
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                            <b-col>{{ data.item.updatedAt }}</b-col>
+                        </b-row>
+
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
+                            <b-col>{{ data.item.items }}</b-col>
+                        </b-row>
+                
+                        <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                    </b-card>
+                  </template>
+            </b-table> 
+
+            <div class="mr-5 h2">CircularItems</div>
+            <b-card>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>ID:</b></b-col>
+                    <b-col>{{circular.id}}</b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>回覧件名:</b></b-col>
+                    <b-col><b-form-textarea v-model="circular.title" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>詳細:</b></b-col>
+                    <b-col><b-form-textarea v-model="circular.detail" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col sm="2" class="text-sm-left"><b>実施日:</b></b-col>
+                    <b-col><b-form-input v-model="circular.dueDate" type="date" size="sm"></b-form-input></b-col>
+                </b-row>
+                <b-row>
+                    <b-button v-if="circular.isInsert" @click="insertCircular(circular)"  size="sm" class="mr-2">保存</b-button>
+                    <b-button v-else @click="updateCircular(circular)" class="mr-2" size="sm" >更新</b-button>
+                    <b-button v-if="circular.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
+                    <b-button v-else @click="deleteCircular(circular)" class="mr-2" size="sm" >削除</b-button>    
+                </b-row>
+
+            </b-card>
+
+            <b-button class="ml-2" @click='addRowItem'>+</b-button> 
+            <b-table hover caption-top striped small
+                primary-key = "id"
+                id="itemList" sort-by="id" small head-variant="light"
+                :items="circular.items" :fields="[
+                    {  key: 'id', label: 'ID',  sortable: true },
+                    {  key: 'person', label: '名前'},
+                    {  key: 'department', label: '部署'},
+                    {  key: 'confirm', label: '確認'},
+                    {  key: 'control', label: '操作'},
+                  ]"> 
+                  <template v-slot:cell(control)="data">
+                    <b-form inline>
+                        <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
+                        <b-button v-if="data.item.isInsertItem" @click="insertCircularItem(data.item)"  size="sm" class="mr-2">保存</b-button>
+                        <b-button v-else @click="updateCircularItem(data.item)" class="mr-2" size="sm" >更新</b-button>
+                        <b-button v-if="data.item.isInsertItem" @click="getCircular(data.item)" class="mr-2" size="sm" >キャンセル</b-button>
+                        <b-button v-else @click="deleteCircularItem(data.item)" class="mr-2" size="sm" >削除</b-button>
+                    </b-form>
+                </template>
+                <template v-slot:cell(person)="data">
+                    <b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input>
+                </template>
+                <template v-slot:cell(confirm)="data">
+                    <b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input>
+                </template>
+                <template #row-details="data">
+                    <b-card>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>名前:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.person" type="text" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>部署:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.department" type="text" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>確認:</b></b-col>
+                            <b-col><b-form-input v-model="data.item.confirm" type="text" size="sm"></b-form-input></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>メモ:</b></b-col>
+                            <b-col><b-form-textarea v-model="data.item.memo" size="sm" rows="3" max-rows="8"></b-form-textarea></b-col>
+                        </b-row>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>作成日:</b></b-col>
+                            <b-col>{{ data.item.createdAt }}</b-col>
+                        </b-row>
+                
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>更新日:</b></b-col>
+                            <b-col>{{ data.item.updatedAt }}</b-col>
+                        </b-row>
+
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>明細データ:</b></b-col>
+                            <b-col>{{ data.item.items }}</b-col>
+                        </b-row>
+                
+                        <b-button size="sm" @click="data.toggleDetails">詳細を隠す</b-button>
+                    </b-card>
+                  </template>
+
+            </b-table>
         </div>
 
         <script>
@@ -205,10 +200,6 @@
                 data: {
                     circulars: [],
                     circular:[],
-                    isInsertCircular: false, //Circular新規処理のため
-                    isList : true,
-                    isDetail : false,
-                    //currentCircularId: '',
                 },
                 methods:{
                     getCirculars: async function(){
@@ -219,15 +210,18 @@
                             console.log(response);
                             self.circulars = response.data;
                             self.circular = []; //　初期状態に戻しておく
-                            self.isInsertCircular = false //新規処理フラグをfalseにする
                         });
                     },
                     insertCircular: async function(item){
+                        self = this
                         url = "r/circular";
                         await axios.post(url, item)
                         .then(function (response) {
                             console.log(response);
-                            self.getCirculars();
+                            //self.getCirculars();
+                            Vue.set(self.circular,'id',response.data.id) //これをやらないと画面に反映されない。
+                            self.getCircular(self.circular)
+                            item.isInsert = false //新規処理フラグをfalseにする
                         });
                     },
 
@@ -249,20 +243,33 @@
                     },
                     addRow: function(){
                         this.circulars.push({
-                            isInsert: true
+                            isInsert: true,
+                            items:[]  //これをやらないとpushができない。
                         })
                         this.circular = this.circulars.slice(-1)[0]
                         this.isInsertCircular = true //詳細画面側の保存ボタン表示のため
                         //circular = []                          
                     },
-                    getCircular: async function(item){
+                    selectCircular: async function(item){
                         //選択されたレコードをcircularに同期させる。
                         //これにより、　circulars の選択行が circularに同期する。
                         this.circular = item
-                        this.isList = false;
-                        this.isDetail = true;
+                    },
+                    getCircular: async function(item){
+                        self = this
+                        url = "r/circular/"+item.id;
+                        await axios.get(url)
+                        .then(function (response) {
+                            console.log(response);
+                            // すでに存在するcircularの示すアドレスに取得した値をassignする。これにより同期。
+                            //self.circular = Object.assign({},response.data)
+                            self.$set(self.circular,0,response.data)
+                            self.$set(self.circular,'items',response.data.items)
+                            //Vue.set(self.circular,'items',response.data.items) 
+                        });
                     },
                     //--- circularItem ----
+                    /*
                     getCircularItems: async function(){
                         self = this;
                         url = "r/circular-items/"+this.circular.id;
@@ -272,13 +279,16 @@
                             self.circular.items = response.data
                         });
                     },
+                    */
                     updateCircularItem: async function(item){
+                        self = this
                         url = "r/circular-item/" + item.id;
                         await axios.put(url, item)
                         .then(function (response) {
                             console.log(response);
                             //self.getCirculars();
-                            self.getCircularItems()
+                            //self.getCircularItems()
+                            self.getCircular(self.circular);
                         });
 
                     },
@@ -288,19 +298,21 @@
                         .then(function (response) {
                             console.log(response);
                             //self.getCirculars();
-                            self.getCircularItems()
+                            //self.getCircularItems()
+                            self.getCircular(self.circular);
 
                         });
                     },
 
                     insertCircularItem: async function(item){
-                        url = "r/circular-item"
-                        item["circularId"] = this.circular.id
+                        self = this;
+                        url = "r/circular-item";
+                        item["circularId"] = this.circular.id;
                         await axios.post(url, item)
                         .then(function (response) {
                             console.log(response);
-                            //self.getCirculars();
-                            self.getCircularItems()
+                            self.getCircular(self.circular);
+                            //self.getCircularItems()
 
                         });
                     },
@@ -314,6 +326,13 @@
                             isInsertItem: true
                         })                          
                     },
+                    rowClass(item,type){
+                        if (!item || type !== 'row') return
+                        if (!item.id) return "d-none"                        
+                        // OK  if (item.id === 1) return "d-none"                        
+                        //if (item.id === 1) return 'table-success'
+                        //if (item.id === 1) return false
+                    }
 
                 },
                 created: function(){
