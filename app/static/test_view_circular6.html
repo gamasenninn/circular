@@ -224,6 +224,7 @@
                         });
                     },
                     deleteCircular: async function(item){
+                        if (!item.id) return;
                         url = "r/circular/" + item.id;
                         await axios.delete(url)
                         .then(function (response) {
