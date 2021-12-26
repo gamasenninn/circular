@@ -115,6 +115,7 @@ def update_circular(id):
     d = request.json
     app.logger.info(d)
 
+    #--- Circularの更新----
     circular  = Circular.query.filter(Circular.id==id).first()
     if not circular:
         return jsonify({"result": "No Data", "id": id, "data": d})
@@ -123,7 +124,24 @@ def update_circular(id):
     circular.detail = d.get('detail')
     circular.dueDate = datetime.datetime.strptime(d.get('dueDate'), "%Y-%m-%d") if d.get('dueDate') else None
 
+    #-----items部分の更新 ------
+    if d.get('items'):
+        update_list = []
+        insert_list = []
+        for item in d['items']:
+            if 'createdAt' in item : del(item['createdAt'])
+            if 'updatedAt' in item : del(item['updatedAt'])
+            if item.get('id'):
+                update_list.append(item)
+            else:
+                insert_list.append(item)
+
+        db.session.bulk_update_mappings(CircularItem,update_list)
+        db.session.bulk_insert_mappings(CircularItem,insert_list)
+
+
     db.session.commit()
+
     #id = newCircular.id
 
     return jsonify({"result": "OK", "id": id, "data": d})

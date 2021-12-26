@@ -63,12 +63,6 @@
                 <template v-slot:cell(control)="data">
                     <b-form inline>
                         <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
-<!--
-                        <b-button v-if="data.item.isInsert" @click="insertCircular(data.item)"  size="sm" class="mr-2">保存</b-button>
-                        <b-button v-else @click="updateCircular(data.item)" class="mr-2" size="sm" >更新</b-button>
-                        <b-button v-if="data.item.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
-                        <b-button v-else @click="deleteCircular(data.item)" class="mr-2" size="sm" >削除</b-button>
--->
                     </b-form>
                 </template>
                 <template #row-details="data">
@@ -120,10 +114,8 @@
                     <b-col><b-form-input v-model="circular.dueDate" type="date" size="sm"></b-form-input></b-col>
                 </b-row>
                 <b-row>
-                    <b-button v-if="circular.isInsert" @click="insertCircular(circular)"  size="sm" class="mr-2">保存</b-button>
-                    <b-button v-else @click="updateCircular(circular)" class="mr-2" size="sm" >更新</b-button>
-                    <b-button v-if="circular.isInsert" @click="getCirculars" class="mr-2" size="sm" >キャンセル</b-button>
-                    <b-button v-else @click="deleteCircular(circular)" class="mr-2" size="sm" >削除</b-button>    
+                    <b-button @click="bulkUpsert(circular)"  size="sm" class="mr-2">適用</b-button>
+                    <b-button @click="deleteCircular(circular)" class="mr-2" size="sm" >削除</b-button>    
                 </b-row>
 
             </b-card>
@@ -142,10 +134,7 @@
                   <template v-slot:cell(control)="data">
                     <b-form inline>
                         <b-form-checkbox v-model="data.detailsShowing" @change="data.toggleDetails"  size="sm" class="mr-2">詳細</b-form-checkbox>    
-                        <b-button v-if="data.item.isInsertItem" @click="insertCircularItem(data.item)"  size="sm" class="mr-2">保存</b-button>
-                        <b-button v-else @click="updateCircularItem(data.item)" class="mr-2" size="sm" >更新</b-button>
-                        <b-button v-if="data.item.isInsertItem" @click="getCircular(data.item)" class="mr-2" size="sm" >キャンセル</b-button>
-                        <b-button v-else @click="deleteCircularItem(data.item)" class="mr-2" size="sm" >削除</b-button>
+                        <b-button @click="deleteCircularItem(data.item)" class="mr-2" size="sm" >削除</b-button>
                     </b-form>
                 </template>
                 <template v-slot:cell(person)="data">
@@ -212,6 +201,14 @@
                             self.circular = []; //　初期状態に戻しておく
                         });
                     },
+                    bulkUpsert(item){
+                        alert("変更を適用します。")
+                        if(!item.id){
+                            this.insertCircular(item);
+                        }else{
+                            this.updateCircular(item);
+                        }
+                    },
                     insertCircular: async function(item){
                         self = this
                         url = "r/circular";
@@ -229,6 +226,7 @@
                         await axios.put(url, item)
                         .then(function (response) {
                             console.log(response);
+                            self.getCircular(self.circular)
                             //self.getCirculars(); //更新の場合はアクセスを減らすため再読み込みはしない（してもよい）。
                         });
                     },
@@ -241,6 +239,7 @@
                         });
                     },
                     addRow: function(){
+                        this.circular = []
                         this.circulars.push({
                             isInsert: true,
                             items:[]  //これをやらないとpushができない。
@@ -261,43 +260,21 @@
                         .then(function (response) {
                             console.log(response);
                             // すでに存在するcircularの示すアドレスに取得した値を同期。
+                            //一括で同期する方法がわからないのでとりあえずループ。
                             //　これが最大ポイント
-                            //self.$set(self.circular,'title',response.data.title)
                             for (const [k,v] of Object.entries(response.data)){
-                                console.log(k,response.data[k])
-                                self.$set(self.circular,k,response.data[k])
+                                self.$set(self.circular,k,v)
                             } 
+
                         });
                     },
                     //--- circularItem ----
-                    updateCircularItem: async function(item){
-                        self = this
-                        url = "r/circular-item/" + item.id;
-                        await axios.put(url, item)
-                        .then(function (response) {
-                            console.log(response);
-                            self.getCircular(self.circular);
-                        });
-
-                    },
                     deleteCircularItem: async function(item){
                         url = "r/circular-item/" + item.id;
                         await axios.delete(url)
                         .then(function (response) {
                             console.log(response);
                             self.getCircular(self.circular);
-                        });
-                    },
-
-                    insertCircularItem: async function(item){
-                        self = this;
-                        url = "r/circular-item";
-                        item["circularId"] = this.circular.id;
-                        await axios.post(url, item)
-                        .then(function (response) {
-                            console.log(response);
-                            self.getCircular(self.circular);
-
                         });
                     },
                     addRowItem: function(){
@@ -307,7 +284,8 @@
                         } 
                         //明細行の新規処理のため、新規処理フラグをONにして空行を追加する
                         this.circular.items.push({
-                            isInsertItem: true
+                            isInsertItem: true,
+                            circularId: self.circular.id //これがないとBulk insertのときに困る
                         })                          
                     },
                     rowClass(item,type){
