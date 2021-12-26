@@ -215,10 +215,8 @@
                         await axios.post(url, item)
                         .then(function (response) {
                             console.log(response);
-                            //self.getCirculars();
-                            Vue.set(self.circular,'id',response.data.id) //これをやらないと画面に反映されない。
+                            Vue.set(self.circular,'id',response.data.id) //これをやらないとIDが画面に反映されない。
                             self.getCircular(self.circular)
-                            item.isInsert = false //新規処理フラグをfalseにする
                         });
                     },
                     updateCircular: async function(item){
@@ -227,7 +225,6 @@
                         .then(function (response) {
                             console.log(response);
                             self.getCircular(self.circular)
-                            //self.getCirculars(); //更新の場合はアクセスを減らすため再読み込みはしない（してもよい）。
                         });
                     },
                     deleteCircular: async function(item){
@@ -241,12 +238,9 @@
                     addRow: function(){
                         this.circular = []
                         this.circulars.push({
-                            isInsert: true,
-                            items:[]  //これをやらないとpushができない。
+                            items:[]  //これをやらないと追加ができない。
                         })
                         this.circular = this.circulars.slice(-1)[0]
-                        this.isInsertCircular = true //詳細画面側の保存ボタン表示のため
-                        //circular = []                          
                     },
                     selectCircular: async function(item){
                         //選択されたレコードをcircularに同期させる。
@@ -282,9 +276,8 @@
                             alert("明細が選択されていません")
                             return
                         } 
-                        //明細行の新規処理のため、新規処理フラグをONにして空行を追加する
+                        //明細行の新規処理のため、空行を追加する
                         this.circular.items.push({
-                            isInsertItem: true,
                             circularId: self.circular.id //これがないとBulk insertのときに困る
                         })                          
                     },
