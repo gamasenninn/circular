@@ -198,16 +198,17 @@
                         .then(function (response) {
                             console.log(response);
                             self.circulars = response.data;
-                            self.circular = []; //　初期状態に戻しておく
+                            //self.circular = []; //　初期状態に戻しておく
+                            self.addRow();
                         });
                     },
                     bulkUpsert(item){
-                        alert("変更を適用します。")
                         if(!item.id){
                             this.insertCircular(item);
                         }else{
                             this.updateCircular(item);
                         }
+                        this.toast("変更を適用しました。")
                     },
                     insertCircular: async function(item){
                         self = this
@@ -284,6 +285,14 @@
                     rowClass(item,type){
                         if (!item || type !== 'row') return
                         if (!item.id) return "d-none"                        
+                    },
+                    toast(toaster, append = false) {
+                            this.$bvToast.toast("aaaaaaaa", {
+                                    title: `メッセージ： ${toaster}`,
+                                    toaster: 'b-toaster-top-right',
+                                    solid: true,
+                                    appendToast: append
+                        })
                     }
                 },
                 created: function(){
