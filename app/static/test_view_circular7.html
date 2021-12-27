@@ -133,7 +133,7 @@
                     {  key: 'isDelete', label: '削除'},
                   ]"> 
                 <template v-slot:cell(isDelete)="data">
-                    <b-form-checkbox v-model="data.item.isDelete"  size="sm" class="mr-2">削除</b-form-checkbox>    
+                    <b-form-checkbox v-if="data.item.id" v-model="data.item.isDelete"  size="sm" class="mr-2">削除</b-form-checkbox>    
                 </template>
                 <template v-slot:cell(control)="data">
                     <b-form inline>
