@@ -179,6 +179,14 @@
                   </template>
 
             </b-table>
+
+            <!-- 更新・取消ボタンのフッター -->
+            <b-card bg-variant="dark" text-variant="white" class="fixed-bottom footer">
+                <div class="d-flex justify-content-end">
+                <b-button variant="info" class="mr-3" @click="alert('更新しました')">更新</b-button>
+                <b-button variant="info" @click="alert('印刷しました。')">印刷</b-button>
+                </div>
+            </b-card>
         </div>
 
         <script>
