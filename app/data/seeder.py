@@ -1,3 +1,6 @@
+import sys,os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 from app import app
 from models import db,Member,Circular,CircularItem
 
@@ -10,7 +13,7 @@ def seeder():
         db.session.commit()
 
     #------ Member ------
-    #print("Seed for Member")
+    print("Seed for Member")
     members = [
         Member( id=1, name= "小野", telNumber="000-0000-0001" ,department="Web"  ,email="1111@email.xx",memo="memo01"),
         Member( id=2, name= "佐藤", telNumber="000-0000-0002" ,department="Web"  ,email="2222@email.xx",memo="memo02"),
