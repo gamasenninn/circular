@@ -108,6 +108,22 @@
     justify-content: flex-start;
   }
 
+  .td-20 {
+    width: 20px;
+  }
+  .td-50 {
+    width: 50px;
+  }
+  .td-100 {
+    width: 100px;
+  }
+  .td-200 {
+    width: 100px;
+  }
+  .td-300 {
+    width: 100px;
+  }
+
   .sm-mode {
     display: none;
   }
@@ -228,10 +244,9 @@
   </div> <!-- end list -->
   <div v-if="!isList">
     <b-button variant="info" @click="isList=true">＜</b-button>
-    <b-row class="mt-1">
-      <b-col></b-col> <!-- dummy -->
+    <b-row class="mt-1 ml-2">
       <!--- 本体　-->
-      <b-col cols=10>
+      <b-col cols=12>
         <b-card class="mb-3 ">
           <b-row>
             <b-col md="11">
@@ -266,13 +281,13 @@
         <div class="pc-mode">
           <b-table primary-key="id" hover caption-top small id="htable" striped sort-by="id" small head-variant="light"
             label="Table Options" :items=circularItems :fields="[
-                      {  key: 'control',   label: '' },
-                      {  key: 'id',   label: 'key' ,thClass: 'd-none', tdClass: 'd-none'},
-                      {  key: 'department', label: '部署' ,  sortable: true},
-                      {  key: 'person', label: '氏名' ,  sortable: true},
-                      {  key: 'confirm',   label: '確認' },
-                      {  key: 'memo',  label: 'メモ' },
-                      {  key: 'save',  label: '確定' },
+                      {  key: 'id',   label: '' ,thClass:'td-20',tdClass:'td-20'},
+                      {  key: 'control',   label: '' ,thClass:'td-20',tdClass:'td-20'},
+                      {  key: 'department', label: '部署' ,  sortable: true,thClass:'td-20',tdClass:'td-20'},
+                      {  key: 'person', label: '氏名' ,  sortable: true,thClass:'td-20',tdClass:'td-20'},
+                      {  key: 'confirm',   label: '確認' ,thClass:'td-50',tdClass:'td-50'},
+                      {  key: 'memo',  label: 'メモ' ,thClass:'td-200',tdClass:'td-200'},
+                      {  key: 'save',  label: '確定' ,thClass:'td-50',tdClass:'td-50'},
                     ]">
 
             <template #cell(control)="data">
@@ -280,7 +295,7 @@
               <!--
               <b-button variant="danger" @click="deleteCircularItem(data.item.id)" size="sm">削除</b-button>
               -->
-              <img :src="'static/images/'+data.index+'.png'" width="50"><br />
+              <img :src="'static/images/'+data.item.id+'.png'" width="50"><br />
             </template>
             <!--
             <template #cell(person)="data">
@@ -302,11 +317,14 @@
                 保存
               </b-button>
             </template>
+            <!--
             <template #table-colgroup="data">
               <col v-for="field in data.fields" :key="field.key" :style="{ width:
                       field.key == 'save' ? '5%':
                       field.key == 'person' ? '8%': '5%'}">
             </template>
+            -->
+
           </b-table>
         </div>
         <!--詳細登録用モーダル　-->
@@ -340,10 +358,10 @@
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
                   <b-col align-self="center">
-                    <img :src="'static/images/'+index+'.png'" width="70"><br />
+                    <img :src="'static/images/'+item.id+'.png'" width="70"><br />
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
-                  <b-col cols=9>
+                  <b-col cols=7>
                     <b-form-select v-model="item.confirm" :options="options.confirm" @change="item.isChange=true">
                     </b-form-select>
                     <b-form-textarea v-model="item.memo" @change="item.isChange=true" 　id="memo" size="sm">
@@ -364,8 +382,6 @@
 
       </b-col> <!-- 本体 -->
 
-      <b-col>
-      </b-col>
 
     </b-row>
   </div>
