@@ -441,7 +441,7 @@
           self = this;
           let request = Object.assign({}, self.editCircularItem);
           delete request.id;
-          request.id = this.header.id;
+          request.circularId = this.header.id;
           console.log(request);
 
           url = "r/circular-item";
