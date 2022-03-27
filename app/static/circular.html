@@ -264,10 +264,12 @@
           <b-button @click="modalEditCircularItem">+</b-button>
         </div>
         <div class="pc-mode">
-          <b-table hover caption-top small id="htable" striped sort-by="id" small head-variant="light"
+          <b-table primary-key="id" hover caption-top small id="htable" striped sort-by="id" small head-variant="light"
             label="Table Options" :items=circularItems :fields="[
                       {  key: 'control',   label: '' },
-                      {  key: 'person', label: '部署/氏名' ,  sortable: true},
+                      {  key: 'id',   label: 'key' ,thClass: 'd-none', tdClass: 'd-none'},
+                      {  key: 'department', label: '部署' ,  sortable: true},
+                      {  key: 'person', label: '氏名' ,  sortable: true},
                       {  key: 'confirm',   label: '確認' },
                       {  key: 'memo',  label: 'メモ' },
                       {  key: 'save',  label: '確定' },
@@ -275,12 +277,16 @@
 
             <template #cell(control)="data">
               <p hidden>{{data.item.id}}</p>
+              <!--
               <b-button variant="danger" @click="deleteCircularItem(data.item.id)" size="sm">削除</b-button>
+              -->
               <img :src="'static/images/'+data.index+'.png'" width="50"><br />
             </template>
+            <!--
             <template #cell(person)="data">
               <span class="mr-3">{{data.item.department}}</span><span>{{data.item.person}}</span>
             </template>
+            -->
             <template #cell(confirm)="data">
               <b-form-group label="">
                 <b-form-select v-model="data.item.confirm" :options="options.confirm" @change="data.item.isChange=true">
@@ -298,7 +304,7 @@
             </template>
             <template #table-colgroup="data">
               <col v-for="field in data.fields" :key="field.key" :style="{ width:
-                      field.key == 'memo' ? '10%':
+                      field.key == 'save' ? '5%':
                       field.key == 'person' ? '8%': '5%'}">
             </template>
           </b-table>
@@ -334,7 +340,7 @@
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
                   <b-col align-self="center">
-                    <img :src="'images/'+index+'.png'" width="70"><br />
+                    <img :src="'static/images/'+index+'.png'" width="70"><br />
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
                   <b-col cols=9>
