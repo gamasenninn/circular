@@ -276,10 +276,10 @@
             <template #cell(control)="data">
               <p hidden>{{data.item.id}}</p>
               <b-button variant="danger" @click="deleteCircularItem(data.item.id)" size="sm">削除</b-button>
-              <img :src="'images/'+data.index+'.png'" width="50"><br/>
+              <img :src="'static/images/'+data.index+'.png'" width="50"><br />
             </template>
             <template #cell(person)="data">
-              <span class="mr-3">{{data.item.departmentId}}</span><span>{{data.item.person}}</span>
+              <span class="mr-3">{{data.item.department}}</span><span>{{data.item.person}}</span>
             </template>
             <template #cell(confirm)="data">
               <b-form-group label="">
@@ -334,17 +334,17 @@
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
                   <b-col align-self="center">
-                    <img :src="'images/'+index+'.png'" width="70"><br/>
+                    <img :src="'images/'+index+'.png'" width="70"><br />
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
                   <b-col cols=9>
-                      <b-form-select v-model="item.confirm" :options="options.confirm" @change="item.isChange=true">
-                      </b-form-select>
-                      <b-form-textarea v-model="item.memo" @change="item.isChange=true" 　id="memo" size="sm">
-                      </b-form-textarea>
-                      <b-button v-if="item.isChange" size="sm" variant="primary" @click="updateCircularItem(item)">
-                        保存
-                      </b-button>
+                    <b-form-select v-model="item.confirm" :options="options.confirm" @change="item.isChange=true">
+                    </b-form-select>
+                    <b-form-textarea v-model="item.memo" @change="item.isChange=true" 　id="memo" size="sm">
+                    </b-form-textarea>
+                    <b-button v-if="item.isChange" size="sm" variant="primary" @click="updateCircularItem(item)">
+                      保存
+                    </b-button>
                   </b-col>
                 </b-row>
               </b-card>
@@ -374,6 +374,7 @@
       data: {
         isList: true,
         circulars: [],
+        members: [],
         header: {
           dueDate: '',
           id: '',
@@ -424,6 +425,11 @@
         },
         insertCircular: async function () {
           self = this;
+          self.header.items = self.members.map(item => ({
+            person: item.name,
+            department: item.department,
+            memberId: item.id
+          }))
           let request = self.header;
           delete request.id;
           console.log(request);
@@ -535,6 +541,17 @@
                 })
                 this.questionaryItems = result;
           */
+        },
+        fetchMembers: async function () {
+          //      this.questionarys= this.test_data_questionarys;
+          self = this;
+          url = "r/members";
+          await axios.get(url)
+            .then(function (response) {
+              console.log(response);
+              self.members = response.data;
+            });
+
         },
         changePage: function (item) {
           this.header = item;
