@@ -142,5 +142,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 app/circular.db
-app/data/seeder.py
-app/data/images
+app/data/*
+
+!.gitkeep
