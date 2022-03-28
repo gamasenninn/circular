@@ -292,7 +292,7 @@
               <!--
               <b-button variant="danger" @click="deleteCircularItem(data.item.id)" size="sm">削除</b-button>
               -->
-              <img :src="'static/images/'+data.item.memberId+'.png'" width="50"><br />
+              <img :src="'/images/'+data.item.memberId" width="50"><br />
             </template>
             <!--
             <template #cell(person)="data">
@@ -355,7 +355,7 @@
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
                   <b-col align-self="center">
-                    <img :src="'static/images/'+item.memberId+'.png'" width="70"><br />
+                    <img :src="'/images/'+item.memberId" width="70"><br />
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
                   <b-col cols=7>
