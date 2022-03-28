@@ -237,7 +237,7 @@
           <b-form-input v-model="header.dueDate" id="dueDate" size="sm" type="date"></b-form-input>
         </b-form-group>
       </b-card>
-      <b-button variant="info" @click="updateCircular">更新</b-button>
+      <b-button variant="info" @click="insertCircular">保存</b-button>
       <b-button variant="warning" @click="$bvModal.hide('modal-circulars')">キャンセル</b-button>
 
     </b-modal>
@@ -484,6 +484,7 @@
         },
         updateCircular: async function () {
           self = this;
+          self.header.items = self.circularItems;
           let request = self.header;
           console.log(request);
 
