@@ -143,5 +143,6 @@ dmypy.json
 cython_debug/
 app/circular.db
 app/data/*
+app/data/images/*
 
 !.gitkeep
