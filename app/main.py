@@ -6,7 +6,7 @@ def test():
 
 @app.route('/')
 def hello():
-    return "Hello world!"
+    return app.send_static_file('circular.html')
 
 @app.route('/circular')
 def rootn():
