@@ -1,4 +1,6 @@
+import os,sys
 from api import app
+from flask import send_file
 
 @app.route('/test')
 def test():
@@ -11,6 +13,21 @@ def hello():
 @app.route('/circular')
 def rootn():
     return app.send_static_file('circular.html')
+
+@app.route('/images/<no>')
+def images(no):
+    fpath= f'./data/images/{no}'
+    no_image = f'./data/images/0.png'
+    if os.path.isfile(fpath+'.png'):
+        return send_file(fpath+'png')
+    elif os.path.isfile(fpath+'.jpg'):
+        return send_file(fpath+'jpg')
+    else:
+        return send_file(no_image)
+
+
+
+
 
 @app.route('/test-view-circular')
 def test_view_circular():
