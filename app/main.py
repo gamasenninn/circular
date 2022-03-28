@@ -18,10 +18,10 @@ def rootn():
 def images(no):
     fpath= f'./data/images/{no}'
     no_image = f'./data/images/0.png'
-    if os.path.isfile(fpath+'.png'):
-        return send_file(fpath+'png')
-    elif os.path.isfile(fpath+'.jpg'):
-        return send_file(fpath+'jpg')
+    #if os.path.isfile(fpath+'.png'):
+    #    return send_file(fpath+'png')
+    if os.path.isfile(fpath+'.jpg'):
+        return send_file(fpath+'.jpg')
     else:
         return send_file(no_image)
 
