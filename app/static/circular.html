@@ -237,7 +237,7 @@
           <b-form-input v-model="header.dueDate" id="dueDate" size="sm" type="date"></b-form-input>
         </b-form-group>
       </b-card>
-      <b-button variant="info" @click="insertCircular">更新</b-button>
+      <b-button variant="info" @click="updateCircular">更新</b-button>
       <b-button variant="warning" @click="$bvModal.hide('modal-circulars')">キャンセル</b-button>
 
     </b-modal>
@@ -275,9 +275,6 @@
           </b-row> <!-- end header -->
         </b-card>
         <!--  table list & edit -->
-        <div class="text-right">
-          <b-button @click="modalEditCircularItem">+</b-button>
-        </div>
         <div class="pc-mode">
           <b-table primary-key="id" hover caption-top small id="htable" striped sort-by="id" small head-variant="light"
             label="Table Options" :items=circularItems :fields="[
@@ -375,6 +372,10 @@
             </div>
           </template>
         </div>
+        <div class="text-right">
+          <b-button @click="modalEditCircularItem">+</b-button>
+        </div>
+
         <!-- end card tile -->
 
 
