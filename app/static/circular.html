@@ -354,11 +354,11 @@
             <div class="item">
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
-                  <b-col align-self="center">
-                    <img :src="'/images/'+item.memberId" width="70"><br />
+                  <b-col cols=3 align-self="center">
+                    <img :src="'/images/'+item.memberId+'?'" width="70"><br />
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
-                  <b-col cols=7>
+                  <b-col cols=8>
                     <b-form-select v-model="item.confirm" :options="options.confirm" @change="item.isChange=true">
                     </b-form-select>
                     <b-form-textarea v-model="item.memo" @change="item.isChange=true" 　id="memo" size="sm">
@@ -367,6 +367,7 @@
                       保存
                     </b-button>
                   </b-col>
+                  <b-col cols="1"></b-col>
                 </b-row>
               </b-card>
             </div>
@@ -590,7 +591,11 @@
 
       },
       computed: {
-        // 逐次、数量＊単価の合計をする
+        countJoiner: function(){
+          //return this.circularItems.map(item => )
+        }        
+
+
       },
       created: function () {
         this.fetchCircularsAll();
