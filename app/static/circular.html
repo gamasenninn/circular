@@ -269,6 +269,7 @@
               </b-form-group>
 
               <div class="float-right">
+                参加数:{{countAttendance}}/不参加:{{countAbsence}}
                 <b-button variant="info" @click="updateCircular">更新</b-button>
               </div>
             </b-col>
@@ -292,7 +293,7 @@
               <!--
               <b-button variant="danger" @click="deleteCircularItem(data.item.id)" size="sm">削除</b-button>
               -->
-              <img :src="'/images/'+data.item.memberId+'?'" width="50"><br />
+              <b-img :src="'/images/'+data.item.memberId+'?'" width="40" rounded></b-img>
             </template>
             <!--
             <template #cell(person)="data">
@@ -355,7 +356,7 @@
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
                   <b-col cols=3 align-self="center">
-                    <img :src="'/images/'+item.memberId+'?'" width="70"><br />
+                    <b-img :src="'/images/'+item.memberId+'?'" width="60"  rounded></b-img>
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
                   <b-col cols=8>
@@ -591,8 +592,13 @@
 
       },
       computed: {
-        countJoiner: function(){
-          //return this.circularItems.map(item => )
+        countAttendance: function(){
+          if (typeof (this.circularItems) == 'undefined') { return 0 } 
+          return this.circularItems.map(item => item.confirm=="参加" ?1:0).reduce(function(a,b){return a+b},0)
+        },        
+        countAbsence: function(){
+          if (typeof (this.circularItems) == 'undefined') { return 0 } 
+          return this.circularItems.map(item => item.confirm=="不参加" ?1:0).reduce(function(a,b){return a+b},0)
         }        
 
 
