@@ -25,6 +25,8 @@
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue.min.js"></script>
 
+<script src="https://unpkg.com/vue-router@3.5.2/dist/vue-router.js"></script>  
+
 <!-- Load the following for BootstrapVueIcons support -->
 <script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue-icons.min.js"></script>
 
@@ -32,6 +34,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
   integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
 
 <!-- 各種便利なツール塁です必要なときに随時使用のこと
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -111,15 +114,19 @@
   .td-20 {
     width: 20px;
   }
+
   .td-50 {
     width: 50px;
   }
+
   .td-100 {
     width: 100px;
   }
+
   .td-200 {
     width: 100px;
   }
+
   .td-300 {
     width: 100px;
   }
@@ -184,7 +191,7 @@
       <div class="text-right">menu</div>
     </b-col>
   </b-row>
-  <div v-if="isList">
+  <div v-if="pageName=='index'">
     <b-row class="mt-2">
       <b-col>
       </b-col> <!-- dummy -->
@@ -242,8 +249,8 @@
 
     </b-modal>
   </div> <!-- end list -->
-  <div v-if="!isList">
-    <b-button variant="info" @click="isList=true">＜</b-button>
+  <div v-if="pageName=='show' || pageName=='edit'">
+    <b-button variant="info" to="?page=index">＜</b-button>
     <b-row class="mt-1 ml-2">
       <!--- 本体　-->
       <b-col cols=12>
@@ -356,7 +363,7 @@
               <b-card no-body border-variant="light" class="overflow-hidden mt-2" style="max-width: 540px;">
                 <b-row align-v="center">
                   <b-col cols=3 align-self="center">
-                    <b-img :src="'/images/'+item.memberId+'?'" width="60"  rounded></b-img>
+                    <b-img :src="'/images/'+item.memberId+'?'" width="60" rounded></b-img>
                     <p class="text-center">{{item.person}}</p>
                   </b-col>
                   <b-col cols=8>
@@ -393,6 +400,11 @@
     Vue.filter('nf', function (val) {
       return val.toLocaleString();
     });
+
+    const router = new VueRouter({
+      routes: [
+      ]
+    })
 
     var app = new Vue({
       el: '#app',
@@ -583,6 +595,7 @@
           this.header = item;
           this.fetchCircularItemsByKey(item.id);
           this.isList = false;
+          this.$router.push('?page=show')
         },
         toDB: function (item) {
           alert("DB更新しました。");
@@ -591,15 +604,21 @@
         }
 
       },
+      router,
       computed: {
-        countAttendance: function(){
-          if (typeof (this.circularItems) == 'undefined') { return 0 } 
-          return this.circularItems.map(item => item.confirm=="参加" ?1:0).reduce(function(a,b){return a+b},0)
-        },        
-        countAbsence: function(){
-          if (typeof (this.circularItems) == 'undefined') { return 0 } 
-          return this.circularItems.map(item => item.confirm=="不参加" ?1:0).reduce(function(a,b){return a+b},0)
-        }        
+        countAttendance: function () {
+          if (typeof (this.circularItems) == 'undefined') { return 0 }
+          return this.circularItems.map(item => item.confirm == "参加" ? 1 : 0).reduce(function (a, b) { return a + b }, 0)
+        },
+        countAbsence: function () {
+          if (typeof (this.circularItems) == 'undefined') { return 0 }
+          return this.circularItems.map(item => item.confirm == "不参加" ? 1 : 0).reduce(function (a, b) { return a + b }, 0)
+        },
+        pageName() {
+          if (this.$route.query.page == undefined) return 'index';
+          return this.$route.query.page;
+        },
+
 
 
       },
