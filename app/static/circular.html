@@ -25,7 +25,7 @@
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue.min.js"></script>
 
-<script src="https://unpkg.com/vue-router@3.5.2/dist/vue-router.js"></script>  
+<script src="https://unpkg.com/vue-router@3.5.2/dist/vue-router.js"></script>
 
 <!-- Load the following for BootstrapVueIcons support -->
 <script src="https://unpkg.com/bootstrap-vue@2.21.1/dist/bootstrap-vue-icons.min.js"></script>
@@ -591,10 +591,12 @@
             });
 
         },
-        changePage: function (item) {
+        changePage: async function (item) {
           this.header = item;
-          this.fetchCircularItemsByKey(item.id);
-          this.isList = false;
+          await this.fetchCircularItemsByKey(item.id);
+          this.header.items = this.circularItems;
+          localStorage.setItem('circular', JSON.stringify(self.header));
+          //this.isList = false;
           this.$router.push('?page=show')
         },
         toDB: function (item) {
@@ -625,6 +627,11 @@
       created: function () {
         this.fetchCircularsAll();
         this.fetchMembers();
+      },
+      mounted: async function () {
+        this.header = await JSON.parse(localStorage.getItem('circular'));
+        this.circularItems = this.header.items;
+
       }
     })
   </script>
