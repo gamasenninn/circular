@@ -266,11 +266,12 @@
               </b-form-group>
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧内容" label-for="detail">
                 <b-form-textarea  v-if="pageName=='edit'" v-model="header.detail" id="detail" size="sm" rows=5></b-form-textarea>
-                <p  v-if="pageName=='show'" id="title" size="sm">{{header.title}}</p>
+                <p  v-if="pageName=='show'" id="detaile" size="sm"><pre>{{header.detail}}</pre></p>
               </b-form-group>
 
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="実施日" label-for="applyDate">
-                <b-form-input v-model="header.dueDate" id="dueDate" size="sm" type="date"></b-form-input>
+                <b-form-input v-if="pageName=='edit'" v-model="header.dueDate" id="dueDate" size="sm" type="date"></b-form-input>
+                <p  v-if="pageName=='show'" id="durDate" size="sm"><pre>{{header.dueDate}}</pre></p>
               </b-form-group>
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧番号" label-for="id">
                 <!-- <b-form-input v-model="header.qid" id="qid" size="sm"></b-form-input> -->
