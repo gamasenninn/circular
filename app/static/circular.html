@@ -261,7 +261,8 @@
               <!-- header -->
 
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧件名" label-for="title">
-                <b-form-input v-model="header.title" id="title" size="sm"></b-form-input>
+                <b-form-input  v-if="pageName=='edit'"v-model="header.title" id="title" size="sm"></b-form-input>
+                <p  v-if="pageName=='show'" id="title" size="sm">{{header.title}}</p>
               </b-form-group>
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧内容" label-for="detail">
                 <b-form-textarea v-model="header.detail" id="detail" size="sm" rows=5></b-form-textarea>
