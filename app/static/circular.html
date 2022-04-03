@@ -266,7 +266,7 @@
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧内容" label-for="detail">
                 <b-form-textarea v-if="pageName=='edit'" v-model="header.detail" id="detail" size="sm" rows=5>
                 </b-form-textarea>
-                <div v-if="pageName=='show'" id="detaile" >
+                <div v-if="pageName=='show'" id="detaile">
                   <pre>{{header.detail}}</pre>
                 </div>
               </b-form-group>
@@ -284,8 +284,10 @@
               </b-form-group>
               <div v-if="pageName=='edit'">
                 <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧URL" label-for="id">
-                  <a :href="window.location.origin + '/circular#/?page=show&id=' +header.id" target="_blank" class="text-left pl-2" id="id">{{ window.location.origin + '/circular#/?page=show&id=' +header.id}}</a>
-                </b-form-group>  
+                  <a :href="window.location.origin + '/circular#/?page=show&id=' +header.id" target="_blank"
+                    class="text-left pl-2" id="id">{{ window.location.origin + '/circular#/?page=show&id='
+                    +header.id}}</a>
+                </b-form-group>
               </div>
 
               <div class="float-right">
@@ -648,17 +650,21 @@
         this.fetchMembers();
       },
       mounted: async function () {
-        if (this.$route.query.id) {
-          console.log("id:", this.$route.query.id)
-          await this.fetchCircularByKey(this.$route.query.id);
-          await this.fetchCircularItemsByKey(this.$route.query.id);
-          this.header.items = this.circularItems;
+        if (this.$route.query.page === undefined ) return;
+        if (this.$route.query.page != 'index') {
+          if (this.$route.query.id) {
+            console.log("id:", this.$route.query.id)
+            await this.fetchCircularByKey(this.$route.query.id);
+            await this.fetchCircularItemsByKey(this.$route.query.id);
+            this.header.items = this.circularItems;
 
-        } else {
-          this.header = await JSON.parse(localStorage.getItem('circular'));
-          this.circularItems = this.header.items;
+          } else {
+            this.header = await JSON.parse(localStorage.getItem('circular'));
+            if (this.header) {
+              this.circularItems = this.header.items;
+            }
+          }
         }
-
       }
     })
   </script>
