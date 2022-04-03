@@ -188,7 +188,6 @@
       <div class="text-center h5">回覧版</div>
     </b-col>
     <b-col>
-      <div class="text-right">menu</div>
     </b-col>
   </b-row>
   <div v-if="pageName=='index'">
@@ -250,7 +249,7 @@
     </b-modal>
   </div> <!-- end list -->
   <div v-if="pageName=='show' || pageName=='edit'">
-    <b-button variant="info" to="?page=index">＜</b-button>
+    <b-button v-if="pageName=='edit'" variant="info" to="?page=index">＜</b-button>
     <b-row class="mt-1 ml-2">
       <!--- 本体　-->
       <b-col cols=12>
@@ -261,26 +260,37 @@
               <!-- header -->
 
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧件名" label-for="title">
-                <b-form-input  v-if="pageName=='edit'" v-model="header.title" id="title" size="sm"></b-form-input>
-                <p  v-if="pageName=='show'" id="title" size="sm">{{header.title}}</p>
+                <b-form-input v-if="pageName=='edit'" v-model="header.title" id="title" size="sm"></b-form-input>
+                <p v-if="pageName=='show'" id="title" size="sm">{{header.title}}</p>
               </b-form-group>
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧内容" label-for="detail">
-                <b-form-textarea  v-if="pageName=='edit'" v-model="header.detail" id="detail" size="sm" rows=5></b-form-textarea>
-                <p  v-if="pageName=='show'" id="detaile" size="sm"><pre>{{header.detail}}</pre></p>
+                <b-form-textarea v-if="pageName=='edit'" v-model="header.detail" id="detail" size="sm" rows=5>
+                </b-form-textarea>
+                <div v-if="pageName=='show'" id="detaile" >
+                  <pre>{{header.detail}}</pre>
+                </div>
               </b-form-group>
 
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="実施日" label-for="applyDate">
-                <b-form-input v-if="pageName=='edit'" v-model="header.dueDate" id="dueDate" size="sm" type="date"></b-form-input>
-                <p  v-if="pageName=='show'" id="durDate" size="sm"><pre>{{header.dueDate}}</pre></p>
+                <b-form-input v-if="pageName=='edit'" v-model="header.dueDate" id="dueDate" size="sm" type="date">
+                </b-form-input>
+                <p v-if="pageName=='show'" id="durDate" size="sm">
+                <pre>{{header.dueDate}}</pre>
+                </p>
               </b-form-group>
               <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧番号" label-for="id">
                 <!-- <b-form-input v-model="header.qid" id="qid" size="sm"></b-form-input> -->
                 <p class="text-left pl-2" id="id">{{header.id}}</p>
               </b-form-group>
+              <div v-if="pageName=='edit'">
+                <b-form-group label-cols-sm="4" label-cols-lg="2" label-size="sm" label="回覧URL" label-for="id">
+                  <a :href="window.location.origin + '/circular#/?page=show&id=' +header.id" target="_blank" class="text-left pl-2" id="id">{{ window.location.origin + '/circular#/?page=show&id=' +header.id}}</a>
+                </b-form-group>  
+              </div>
 
               <div class="float-right">
                 参加数:{{countAttendance}}/不参加:{{countAbsence}}
-                <b-button variant="info" @click="updateCircular">更新</b-button>
+                <b-button v-if="pageName=='edit'" variant="info" @click="updateCircular">更新</b-button>
               </div>
             </b-col>
           </b-row> <!-- end header -->
@@ -289,7 +299,7 @@
         <div class="pc-mode">
           <b-table primary-key="id" hover caption-top small id="htable" striped sort-by="id" small head-variant="light"
             label="Table Options" :items=circularItems :fields="[
-                      {  key: 'id',   label: '' ,thClass:'td-20',tdClass:'td-20'},
+                      //{  key: 'id',   label: '' ,thClass:'td-20',tdClass:'td-20'},
                       {  key: 'control',   label: '' ,thClass:'td-20',tdClass:'td-20'},
                       {  key: 'department', label: '部署' ,  sortable: true,thClass:'td-20',tdClass:'td-20'},
                       {  key: 'person', label: '氏名' ,  sortable: true,thClass:'td-20',tdClass:'td-20'},
@@ -494,6 +504,7 @@
           await axios.post(url, request)
             .then(function (response) {
               console.log(response);
+              localStorage.setItem('circular', JSON.stringify(self.header));
               self.fetchCircularItemsByKey(self.header.id);
             });
 
@@ -509,6 +520,7 @@
           await axios.put(url, request)
             .then(function (response) {
               console.log(response);
+              localStorage.setItem('circular', JSON.stringify(self.header));
               self.fetchCircularsAll();
             });
 
@@ -526,11 +538,12 @@
           await axios.put(url, request)
             .then(function (response) {
               console.log(response);
+              item.isChange = false;
+              localStorage.setItem('circular', JSON.stringify(self.header));
               //self.fetchQuestionarysAll();
               //self.fetchQuestionaryItemsByKey(item.qid)
             });
           console.log(item);
-          item.isChange = false;
 
           //self.$bvModal.hide('modal-questionarys');
         },
@@ -567,6 +580,15 @@
             });
 
         },
+        fetchCircularByKey: async function (id) {
+          self = this;
+          url = "r/circular/" + id;
+          await axios.get(url)
+            .then(function (response) {
+              console.log(response);
+              self.header = response.data;
+            });
+        },
         fetchCircularItemsByKey: async function (id) {
           self = this;
           url = "r/circular-items/" + id;
@@ -576,12 +598,6 @@
               self.circularItems = response.data;
               self.circularItems = self.circularItems.map(item => ({ ...item, isChange: false }));
             });
-          /*
-                result= this.testDataquestionaryItems.filter(function(v){
-                  return v.qid == qid;
-                })
-                this.questionaryItems = result;
-          */
         },
         fetchMembers: async function () {
           //      this.questionarys= this.test_data_questionarys;
@@ -600,7 +616,7 @@
           this.header.items = this.circularItems;
           localStorage.setItem('circular', JSON.stringify(self.header));
           //this.isList = false;
-          this.$router.push('?page=show')
+          this.$router.push('?page=edit')
         },
         toDB: function (item) {
           alert("DB更新しました。");
@@ -632,8 +648,16 @@
         this.fetchMembers();
       },
       mounted: async function () {
-        this.header = await JSON.parse(localStorage.getItem('circular'));
-        this.circularItems = this.header.items;
+        if (this.$route.query.id) {
+          console.log("id:", this.$route.query.id)
+          await this.fetchCircularByKey(this.$route.query.id);
+          await this.fetchCircularItemsByKey(this.$route.query.id);
+          this.header.items = this.circularItems;
+
+        } else {
+          this.header = await JSON.parse(localStorage.getItem('circular'));
+          this.circularItems = this.header.items;
+        }
 
       }
     })
